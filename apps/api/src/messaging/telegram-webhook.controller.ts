@@ -1,4 +1,4 @@
-import { Controller, Post, Param, Body, Logger } from '@nestjs/common';
+import { Controller, Post, Param, Body, HttpCode, Logger } from '@nestjs/common';
 import { Public } from '../auth/public.decorator';
 import { SupabaseService } from '../supabase/supabase.service';
 import { TelegramService } from './telegram.service';
@@ -18,6 +18,7 @@ export class TelegramWebhookController {
 
   @Public()
   @Post(':botToken')
+  @HttpCode(200)
   async handleUpdate(
     @Param('botToken') botToken: string,
     @Body() body: any,
