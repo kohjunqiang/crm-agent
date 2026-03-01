@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Param, Body } from '@nestjs/common';
+import { Controller, Get, Patch, Post, Param, Body } from '@nestjs/common';
 import { ContactsService } from './contacts.service';
 import { MessagesService } from './messages.service';
 import { CurrentUser, RequestUser } from '../auth/user.decorator';
@@ -30,5 +30,28 @@ export class ContactsController {
     @Body() body: { status?: string; agent_enabled?: boolean; name?: string },
   ) {
     return this.contactsService.updateContact(user.id, id, body);
+  }
+
+  @Post(':id/messages')
+  async sendMessage(
+    @CurrentUser() user: RequestUser,
+    @Param('id') id: string,
+    @Body() body: { content: string },
+  ) {
+    const contact = await this.contactsService.getContact(user.id, id);
+
+    // TODO: Actually send via WhatsApp/Telegram (Task 8A)
+    const message = await this.messagesService.saveMessage({
+      contact_id: id,
+      user_id: user.id,
+      direction: 'outbound',
+      sender: 'human',
+      channel: contact.channel,
+      content: body.content,
+    });
+
+    await this.contactsService.updateLastMessage(id, body.content);
+
+    return message;
   }
 }
