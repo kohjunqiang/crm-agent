@@ -1,0 +1,22 @@
+{
+  "name": "@agent-crm/shared",
+  "version": "0.0.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "migrate:latest": "kysely migrate:latest",
+    "migrate:down": "kysely migrate:down",
+    "migrate:status": "kysely migrate:status"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.98.0",
+    "kysely": "^0.28.11",
+    "kysely-ctl": "^0.20.0",
+    "pg": "^8.19.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.18.0"
+  }
+}
