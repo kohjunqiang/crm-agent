@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
-import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { LogoutButton } from './logout-button';
+import { SidebarNav } from './sidebar-nav';
 
 export default async function DashboardLayout({
   children,
@@ -21,20 +21,7 @@ export default async function DashboardLayout({
         <div className="p-6">
           <span className="text-xl font-bold">AgentCRM</span>
         </div>
-        <nav className="flex flex-1 flex-col gap-1 px-3">
-          <Link
-            href="/dashboard"
-            className="rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-100"
-          >
-            Dashboard
-          </Link>
-          <Link
-            href="/settings"
-            className="rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-100"
-          >
-            Settings
-          </Link>
-        </nav>
+        <SidebarNav />
         <div className="border-t p-3">
           <LogoutButton />
         </div>
