@@ -4,6 +4,7 @@ import { SupabaseService } from '../supabase/supabase.service';
 import { TelegramService } from './telegram.service';
 import { ContactsService } from '../contacts/contacts.service';
 import { MessagesService } from '../contacts/messages.service';
+import { AgentService } from '../agent/agent.service';
 
 @Controller('webhooks/telegram')
 export class TelegramWebhookController {
@@ -14,6 +15,7 @@ export class TelegramWebhookController {
     private readonly supabase: SupabaseService,
     private readonly contactsService: ContactsService,
     private readonly messagesService: MessagesService,
+    private readonly agentService: AgentService,
   ) {}
 
   @Public()
@@ -71,9 +73,11 @@ export class TelegramWebhookController {
     // Update last message preview
     await this.contactsService.updateLastMessage(contact.id, parsed.text);
 
-    // TODO: if contact.agent_enabled, call agent
+    // Fire-and-forget: agent processes asynchronously, webhook returns 200 immediately
     if (contact.agent_enabled) {
-      this.logger.log('Agent would reply here');
+      this.agentService
+        .processInboundMessage(contact.id, userId, parsed.text)
+        .catch((err) => this.logger.error('Agent error:', err));
     }
 
     return { ok: true };

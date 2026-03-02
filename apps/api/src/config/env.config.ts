@@ -19,5 +19,6 @@ export const EnvConfigModule = ConfigModule.forRoot({
  * SUPABASE_SERVICE_ROLE_KEY – service-role key (bypasses RLS)
  * ANTHROPIC_API_KEY       – Anthropic API key
  * WHATSAPP_APP_SECRET     – WhatsApp webhook secret
+ * API_BASE_URL            – Public base URL for webhooks (e.g. https://example.ngrok.io)
  * PORT                    – HTTP port (default 3001)
  */

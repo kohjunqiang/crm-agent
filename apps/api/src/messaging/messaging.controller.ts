@@ -16,6 +16,7 @@ import { SupabaseService } from '../supabase/supabase.service';
 import { WhatsAppService } from './whatsapp.service';
 import { ContactsService } from '../contacts/contacts.service';
 import { MessagesService } from '../contacts/messages.service';
+import { AgentService } from '../agent/agent.service';
 
 @Controller('webhooks/whatsapp')
 export class MessagingController {
@@ -27,6 +28,7 @@ export class MessagingController {
     private readonly contactsService: ContactsService,
     private readonly messagesService: MessagesService,
     private readonly config: ConfigService,
+    private readonly agentService: AgentService,
   ) {}
 
   @Public()
@@ -132,9 +134,11 @@ export class MessagingController {
     // Update last message preview
     await this.contactsService.updateLastMessage(contact.id, parsed.text);
 
-    // TODO: if contact.agent_enabled, call agent
+    // Fire-and-forget: agent processes asynchronously, webhook returns 200 immediately
     if (contact.agent_enabled) {
-      console.log('Agent would reply here');
+      this.agentService
+        .processInboundMessage(contact.id, userId, parsed.text)
+        .catch((err) => this.logger.error('Agent error:', err));
     }
 
     return { ok: true };
