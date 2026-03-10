@@ -9,10 +9,10 @@ import { ToolExecutorService } from './tool-executor.service';
 
 @Module({
   imports: [
-    ContactsModule,
+    forwardRef(() => ContactsModule),
     forwardRef(() => MessagingModule),
     KnowledgeModule,
-    AgentConfigModule,
+    forwardRef(() => AgentConfigModule),
   ],
   providers: [AgentService, PromptService, ToolExecutorService],
   exports: [AgentService],

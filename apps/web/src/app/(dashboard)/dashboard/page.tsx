@@ -6,6 +6,7 @@ import { getContacts } from '@/lib/api';
 import { createClient } from '@/lib/supabase/client';
 import { ContactList } from '@/components/contacts/ContactList';
 import { Separator } from '@/components/ui/separator';
+import { ConversationPanel } from '@/components/conversation/ConversationPanel';
 import { useRealtimeMessages } from '@/hooks/useRealtimeMessages';
 
 export default function DashboardPage() {
@@ -87,17 +88,22 @@ export default function DashboardPage() {
         </div>
       </div>
       <Separator orientation="vertical" />
-      <div className="flex flex-1 items-center justify-center">
-        {selectedId ? (
-          <p className="text-sm text-muted-foreground">
-            Conversation view coming soon.
-          </p>
-        ) : (
+      {selectedId ? (
+        <ConversationPanel
+          key={selectedId}
+          contactId={selectedId}
+          onDeleted={() => {
+            setContacts((prev) => prev.filter((c) => c.id !== selectedId));
+            setSelectedId(null);
+          }}
+        />
+      ) : (
+        <div className="flex flex-1 items-center justify-center">
           <p className="text-sm text-muted-foreground">
             Select a contact to view the conversation.
           </p>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

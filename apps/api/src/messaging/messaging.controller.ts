@@ -88,6 +88,14 @@ export class MessagingController {
       return { ok: true };
     }
 
+    // Skip old messages (e.g. backlog delivered when webhook reconnects)
+    if (parsed.timestamp && Date.now() / 1000 - parsed.timestamp > 120) {
+      this.logger.log(
+        `Skipping old WhatsApp message (age: ${Math.round(Date.now() / 1000 - parsed.timestamp)}s)`,
+      );
+      return { ok: true };
+    }
+
     // Look up agent_config by whatsapp_phone_id
     const { data: agentConfig } = await this.supabase
       .getClient()

@@ -11,8 +11,10 @@ export class TelegramService {
     messageId: number;
     text: string;
     firstName: string | null;
+    businessConnectionId?: string;
   } | null {
-    const message = body?.message;
+    // Support both regular messages and Telegram Business messages
+    const message = body?.business_message ?? body?.message;
     if (!message || typeof message.text !== 'string') {
       return null;
     }
@@ -22,6 +24,7 @@ export class TelegramService {
       messageId: message.message_id,
       text: message.text,
       firstName: message.from?.first_name ?? null,
+      businessConnectionId: message.business_connection_id ?? undefined,
     };
   }
 
@@ -29,18 +32,25 @@ export class TelegramService {
     botToken: string,
     chatId: string,
     text: string,
+    businessConnectionId?: string | null,
   ): Promise<void> {
-    try {
-      await fetch(
-        `https://api.telegram.org/bot${botToken}/sendMessage`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: chatId, text }),
-        },
-      );
-    } catch (error) {
-      this.logger.error('Failed to send Telegram message', error);
+    const payload: Record<string, string> = { chat_id: chatId, text };
+    if (businessConnectionId) {
+      payload.business_connection_id = businessConnectionId;
+    }
+
+    const res = await fetch(
+      `https://api.telegram.org/bot${botToken}/sendMessage`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      },
+    );
+
+    if (!res.ok) {
+      const body = await res.text().catch(() => '');
+      throw new Error(`Telegram API ${res.status}: ${body}`);
     }
   }
 
@@ -54,7 +64,14 @@ export class TelegramService {
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: webhookUrl }),
+          body: JSON.stringify({
+            url: webhookUrl,
+            allowed_updates: [
+              'message',
+              'business_connection',
+              'business_message',
+            ],
+          }),
         },
       );
       const data = (await res.json()) as { ok: boolean };

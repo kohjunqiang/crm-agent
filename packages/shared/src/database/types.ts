@@ -13,6 +13,7 @@ export interface ContactsTable {
   name: string | null;
   phone: string | null;
   telegram_chat_id: string | null;
+  telegram_business_connection_id: string | null;
   channel: 'whatsapp' | 'telegram';
   status: 'new' | 'engaged' | 'qualified' | 'converted';
   agent_enabled: Generated<boolean>;
@@ -52,6 +53,7 @@ export interface AgentConfigTable {
   whatsapp_token: string | null;
   whatsapp_verify_token: string | null;
   telegram_bot_token: string | null;
+  telegram_business_connection_id: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }

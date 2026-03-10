@@ -58,6 +58,7 @@ export class ContactsService {
     params: {
       phone?: string;
       telegram_chat_id?: string;
+      telegram_business_connection_id?: string;
       channel: string;
       name?: string;
     },
@@ -76,11 +77,23 @@ export class ContactsService {
     const { data: existing } = await query.maybeSingle();
 
     if (existing) {
-      // Update name if provided and current name is null
+      // Update name and/or business_connection_id if needed
+      const updates: Record<string, any> = {};
       if (params.name && !existing.name) {
+        updates.name = params.name;
+      }
+      if (
+        params.telegram_business_connection_id !== undefined &&
+        params.telegram_business_connection_id !==
+          existing.telegram_business_connection_id
+      ) {
+        updates.telegram_business_connection_id =
+          params.telegram_business_connection_id ?? null;
+      }
+      if (Object.keys(updates).length > 0) {
         const { data: updated } = await client
           .from('contacts')
-          .update({ name: params.name })
+          .update(updates)
           .eq('id', existing.id)
           .eq('user_id', userId)
           .select()
@@ -97,16 +110,38 @@ export class ContactsService {
         user_id: userId,
         phone: params.phone ?? null,
         telegram_chat_id: params.telegram_chat_id ?? null,
+        telegram_business_connection_id:
+          params.telegram_business_connection_id ?? null,
         channel: params.channel,
         name: params.name ?? null,
         status: 'new',
-        agent_enabled: true,
+        agent_enabled: false,
       })
       .select()
       .single();
 
     if (error || !created) throw error;
     return created as Contact;
+  }
+
+  async deleteContact(userId: string, contactId: string): Promise<void> {
+    const client = this.supabase.getClient();
+
+    // Delete messages first (child rows)
+    await client
+      .from('messages')
+      .delete()
+      .eq('contact_id', contactId)
+      .eq('user_id', userId);
+
+    // Delete the contact
+    const { error } = await client
+      .from('contacts')
+      .delete()
+      .eq('id', contactId)
+      .eq('user_id', userId);
+
+    if (error) throw error;
   }
 
   async updateLastMessage(contactId: string, preview: string): Promise<void> {

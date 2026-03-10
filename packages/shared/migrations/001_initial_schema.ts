@@ -35,11 +35,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .where(sql.ref('telegram_chat_id'), 'is not', null)
     .execute();
 
-  await db.schema
-    .createIndex('idx_contacts_user_last_msg')
-    .on('contacts')
-    .columns(['user_id', sql`last_message_at DESC`])
-    .execute();
+  await sql`CREATE INDEX idx_contacts_user_last_msg ON contacts (user_id, last_message_at DESC)`.execute(db);
 
   // Messages table
   await db.schema
@@ -55,11 +51,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
-  await db.schema
-    .createIndex('idx_messages_contact_time')
-    .on('messages')
-    .columns(['contact_id', sql`created_at ASC`])
-    .execute();
+  await sql`CREATE INDEX idx_messages_contact_time ON messages (contact_id, created_at ASC)`.execute(db);
 
   await db.schema
     .createIndex('idx_messages_external')

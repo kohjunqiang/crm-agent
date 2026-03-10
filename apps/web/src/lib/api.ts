@@ -54,12 +54,21 @@ export async function updateContact(
 export async function sendMessage(
   contactId: string,
   content: string,
-): Promise<Message> {
+): Promise<{ message: Message; warning?: string }> {
   const res = await authFetch(`/api/contacts/${contactId}/messages`, {
     method: 'POST',
     body: JSON.stringify({ content }),
   });
-  return res.json();
+  const data = await res.json();
+  // Controller returns Message directly on success, or { message, warning } on issues
+  if (data.warning) {
+    return data as { message: Message; warning: string };
+  }
+  return { message: data as Message };
+}
+
+export async function deleteContact(id: string): Promise<void> {
+  await authFetch(`/api/contacts/${id}`, { method: 'DELETE' });
 }
 
 // Knowledge Base
@@ -104,7 +113,10 @@ export async function getAgentConfig(): Promise<{ config: AgentConfig }> {
 
 export async function updateAgentConfig(
   data: Partial<AgentConfig>,
-): Promise<AgentConfig> {
+): Promise<{
+  config: AgentConfig;
+  telegram_webhook?: { set: boolean; url: string };
+}> {
   const res = await authFetch('/api/config', {
     method: 'PUT',
     body: JSON.stringify(data),

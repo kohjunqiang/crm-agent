@@ -9,6 +9,7 @@ export const ContactSchema = z.object({
   name: z.string().nullable(),
   phone: z.string().nullable(),
   telegram_chat_id: z.string().nullable(),
+  telegram_business_connection_id: z.string().nullable(),
   channel: ChannelSchema,
   status: ContactStatusSchema,
   agent_enabled: z.boolean(),

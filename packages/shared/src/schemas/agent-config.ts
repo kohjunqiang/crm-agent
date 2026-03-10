@@ -8,6 +8,7 @@ export const AgentConfigSchema = z.object({
   whatsapp_token: z.string().nullable(),
   whatsapp_verify_token: z.string().nullable(),
   telegram_bot_token: z.string().nullable(),
+  telegram_business_connection_id: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
 });

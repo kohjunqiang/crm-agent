@@ -1,9 +1,8 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class WhatsAppService {
-  private readonly logger = new Logger(WhatsAppService.name);
 
   validateSignature(
     rawBody: Buffer,
@@ -33,6 +32,7 @@ export class WhatsAppService {
     text: string;
     contactName: string | null;
     phoneNumberId: string;
+    timestamp: number | null;
   } | null {
     const value = body?.entry?.[0]?.changes?.[0]?.value;
     if (!value) return null;
@@ -52,6 +52,7 @@ export class WhatsAppService {
       text,
       contactName: value.contacts?.[0]?.profile?.name ?? null,
       phoneNumberId: value.metadata?.phone_number_id,
+      timestamp: message.timestamp ? Number(message.timestamp) : null,
     };
   }
 
@@ -61,25 +62,26 @@ export class WhatsAppService {
     to: string,
     text: string,
   ): Promise<void> {
-    try {
-      await fetch(
-        `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            messaging_product: 'whatsapp',
-            to,
-            type: 'text',
-            text: { body: text },
-          }),
+    const res = await fetch(
+      `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
         },
-      );
-    } catch (error) {
-      this.logger.error('Failed to send WhatsApp message', error);
+        body: JSON.stringify({
+          messaging_product: 'whatsapp',
+          to,
+          type: 'text',
+          text: { body: text },
+        }),
+      },
+    );
+
+    if (!res.ok) {
+      const body = await res.text().catch(() => '');
+      throw new Error(`WhatsApp API ${res.status}: ${body}`);
     }
   }
 }

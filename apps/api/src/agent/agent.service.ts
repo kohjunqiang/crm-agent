@@ -12,7 +12,7 @@ import { ToolExecutorService } from './tool-executor.service';
 @Injectable()
 export class AgentService {
   private readonly logger = new Logger(AgentService.name);
-  private readonly anthropic: Anthropic;
+  private readonly anthropic: Anthropic | undefined;
 
   constructor(
     private readonly configService: ConfigService,
@@ -24,9 +24,10 @@ export class AgentService {
     private readonly promptService: PromptService,
     private readonly toolExecutor: ToolExecutorService,
   ) {
-    this.anthropic = new Anthropic({
-      apiKey: this.configService.get<string>('ANTHROPIC_API_KEY'),
-    });
+    const apiKey = this.configService.get<string>('ANTHROPIC_API_KEY');
+    if (apiKey) {
+      this.anthropic = new Anthropic({ apiKey });
+    }
   }
 
   /**
@@ -62,91 +63,100 @@ export class AgentService {
       const config = await this.agentConfigService.getConfig(userId);
 
       // 2. REASON — Build prompt and call Claude with tools
-      const systemPrompt = this.promptService.buildSystemPrompt(
-        config.system_prompt,
-        contact.channel,
-      );
-      const conversationMessages = this.promptService.buildMessages(
-        messages,
-        messageContent,
-      );
-      const tools = this.promptService.getTools();
+      let replyText: string;
 
-      this.logger.log(
-        `Agent processing message for contact ${contactId}: "${messageContent.substring(0, 50)}..."`,
-      );
+      if (!this.anthropic) {
+        this.logger.warn(
+          'ANTHROPIC_API_KEY not set, skipping agent reply',
+        );
+        return;
+      } else {
+        const systemPrompt = this.promptService.buildSystemPrompt(
+          config.system_prompt,
+          contact.channel,
+        );
+        const conversationMessages = this.promptService.buildMessages(
+          messages,
+          messageContent,
+        );
+        const tools = this.promptService.getTools();
 
-      let response = await this.anthropic.messages.create({
-        model: 'claude-sonnet-4-5-20250929',
-        max_tokens: 1024,
-        system: systemPrompt,
-        messages: conversationMessages,
-        tools,
-      });
+        this.logger.log(
+          `Agent processing message for contact ${contactId}: "${messageContent.substring(0, 50)}..."`,
+        );
 
-      // 3. ACT — Process tool calls in a loop (max 5 iterations to prevent runaway)
-      let currentMessages: any[] = [...conversationMessages];
-      let iterations = 0;
-      const MAX_ITERATIONS = 5;
-
-      while (
-        response.stop_reason === 'tool_use' &&
-        iterations < MAX_ITERATIONS
-      ) {
-        iterations++;
-        this.logger.log(`Agent tool use iteration ${iterations}`);
-
-        // Execute each tool call
-        const toolResults: any[] = [];
-        for (const block of response.content) {
-          if (block.type === 'tool_use') {
-            this.logger.log(
-              `Agent calling tool: ${block.name}(${JSON.stringify(block.input)})`,
-            );
-            const result = await this.toolExecutor.execute(
-              block.name,
-              block.input as Record<string, any>,
-              userId,
-              contactId,
-            );
-            toolResults.push({
-              type: 'tool_result',
-              tool_use_id: block.id,
-              content: result,
-            });
-          }
-        }
-
-        // Send tool results back to Claude for next reasoning step
-        currentMessages = [
-          ...currentMessages,
-          { role: 'assistant' as const, content: response.content },
-          { role: 'user' as const, content: toolResults },
-        ];
-
-        response = await this.anthropic.messages.create({
+        let response = await this.anthropic.messages.create({
           model: 'claude-sonnet-4-5-20250929',
           max_tokens: 1024,
           system: systemPrompt,
-          messages: currentMessages,
+          messages: conversationMessages,
           tools,
         });
-      }
 
-      if (iterations >= MAX_ITERATIONS) {
-        this.logger.warn(
-          `Agent hit max iterations (${MAX_ITERATIONS}) for contact ${contactId}`,
-        );
-      }
+        // 3. ACT — Process tool calls in a loop (max 5 iterations to prevent runaway)
+        let currentMessages: any[] = [...conversationMessages];
+        let iterations = 0;
+        const MAX_ITERATIONS = 5;
 
-      // 4. RESPOND — Extract the final text reply
-      const replyText = response.content
-        .filter(
-          (block): block is Anthropic.TextBlock => block.type === 'text',
-        )
-        .map((block) => block.text)
-        .join('\n')
-        .trim();
+        while (
+          response.stop_reason === 'tool_use' &&
+          iterations < MAX_ITERATIONS
+        ) {
+          iterations++;
+          this.logger.log(`Agent tool use iteration ${iterations}`);
+
+          // Execute each tool call
+          const toolResults: any[] = [];
+          for (const block of response.content) {
+            if (block.type === 'tool_use') {
+              this.logger.log(
+                `Agent calling tool: ${block.name}(${JSON.stringify(block.input)})`,
+              );
+              const result = await this.toolExecutor.execute(
+                block.name,
+                block.input as Record<string, any>,
+                userId,
+                contactId,
+              );
+              toolResults.push({
+                type: 'tool_result',
+                tool_use_id: block.id,
+                content: result,
+              });
+            }
+          }
+
+          // Send tool results back to Claude for next reasoning step
+          currentMessages = [
+            ...currentMessages,
+            { role: 'assistant' as const, content: response.content },
+            { role: 'user' as const, content: toolResults },
+          ];
+
+          response = await this.anthropic.messages.create({
+            model: 'claude-sonnet-4-5-20250929',
+            max_tokens: 1024,
+            system: systemPrompt,
+            messages: currentMessages,
+            tools,
+          });
+        }
+
+        if (iterations >= MAX_ITERATIONS) {
+          this.logger.warn(
+            `Agent hit max iterations (${MAX_ITERATIONS}) for contact ${contactId}`,
+          );
+        }
+
+        // 4. RESPOND — Extract the final text reply
+        replyText = response.content
+          .filter(
+            (block): block is Anthropic.TextBlock => block.type === 'text',
+          )
+          .map((block) => block.text)
+          .join('\n')
+          .trim();
+      }
 
       if (!replyText) {
         this.logger.warn(
@@ -216,6 +226,7 @@ export class AgentService {
         config.telegram_bot_token,
         contact.telegram_chat_id,
         text,
+        contact.telegram_business_connection_id,
       );
     }
   }

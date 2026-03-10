@@ -5,6 +5,7 @@ import { TelegramService } from './telegram.service';
 import { ContactsService } from '../contacts/contacts.service';
 import { MessagesService } from '../contacts/messages.service';
 import { AgentService } from '../agent/agent.service';
+import { AgentConfigService } from '../agent-config/agent-config.service';
 
 @Controller('webhooks/telegram')
 export class TelegramWebhookController {
@@ -16,6 +17,7 @@ export class TelegramWebhookController {
     private readonly contactsService: ContactsService,
     private readonly messagesService: MessagesService,
     private readonly agentService: AgentService,
+    private readonly agentConfigService: AgentConfigService,
   ) {}
 
   @Public()
@@ -39,10 +41,56 @@ export class TelegramWebhookController {
 
     const userId: string = config.user_id;
 
-    // Parse the inbound message
+    // Handle business_connection event (fired when bot is connected/disconnected from a business account)
+    if (body?.business_connection) {
+      const bc = body.business_connection;
+      if (bc.is_enabled && bc.can_reply) {
+        this.agentConfigService
+          .updateConfig(userId, {
+            telegram_business_connection_id: bc.id,
+          })
+          .catch((err) =>
+            this.logger.error('Failed to store business_connection_id:', err),
+          );
+        this.logger.log(`Stored business_connection_id: ${bc.id}`);
+      } else {
+        // Bot was disconnected or lost reply permission — clear connection ID
+        this.agentConfigService
+          .updateConfig(userId, {
+            telegram_business_connection_id: null,
+          })
+          .catch((err) =>
+            this.logger.error('Failed to clear business_connection_id:', err),
+          );
+        this.logger.log('Cleared business_connection_id (bot disconnected or no reply permission)');
+      }
+      return { ok: true };
+    }
+
+    // Parse the inbound message (supports regular and business messages)
     const parsed = this.telegramService.parseInboundMessage(body);
     if (!parsed) {
       return { ok: true };
+    }
+
+    // Skip old messages (e.g. backlog delivered when webhook reconnects)
+    const messageDate = (body?.business_message ?? body?.message)?.date;
+    if (messageDate && Date.now() / 1000 - messageDate > 120) {
+      this.logger.log(
+        `Skipping old Telegram message (age: ${Math.round(Date.now() / 1000 - messageDate)}s)`,
+      );
+      return { ok: true };
+    }
+
+    // Store business_connection_id if present (Telegram Business accounts)
+    if (parsed.businessConnectionId) {
+      this.agentConfigService
+        .updateConfig(userId, {
+          telegram_business_connection_id: parsed.businessConnectionId,
+        })
+        .catch((err) =>
+          this.logger.error('Failed to store business_connection_id:', err),
+        );
     }
 
     // Dedup by external_id
@@ -52,9 +100,10 @@ export class TelegramWebhookController {
       return { ok: true };
     }
 
-    // Find or create contact
+    // Find or create contact (store business_connection_id per contact)
     const contact = await this.contactsService.findOrCreateContact(userId, {
       telegram_chat_id: parsed.chatId,
+      telegram_business_connection_id: parsed.businessConnectionId,
       channel: 'telegram',
       name: parsed.firstName ?? undefined,
     });
