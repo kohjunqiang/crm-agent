@@ -3,3 +3,7 @@ dist
 .next
 .turbo
 .env
+dev.log
+.planning/
+.env.local
+**/.env.local

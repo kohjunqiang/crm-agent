@@ -1,24 +1,32 @@
 import { ConfigModule } from '@nestjs/config';
+import { z } from 'zod';
+
+const envSchema = z.object({
+  SUPABASE_URL: z.string().min(1),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+  DATABASE_URL: z.string().min(1),
+  ANTHROPIC_API_KEY: z.string().min(1),
+  PORT: z.coerce.number().default(3001),
+  CORS_ORIGIN: z.string().default('http://localhost:3000'),
+  API_BASE_URL: z.string().optional(),
+  WHATSAPP_APP_SECRET: z.string().optional(),
+});
+
+export type EnvConfig = z.infer<typeof envSchema>;
 
 export const EnvConfigModule = ConfigModule.forRoot({
   isGlobal: true,
   envFilePath: ['.env.local', '.env'],
-  validate: (config: Record<string, unknown>) => {
-    const required = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'];
-    for (const key of required) {
-      if (!config[key]) {
-        throw new Error(`Missing required env var: ${key}`);
-      }
+  validate: (config) => {
+    const result = envSchema.safeParse(config);
+    if (!result.success) {
+      const missing = result.error.issues
+        .map((i) => `${i.path.join('.')}: ${i.message}`)
+        .join('\n  ');
+      throw new Error(
+        `Environment validation failed:\n  ${missing}\n\nCheck your .env.local file.`,
+      );
     }
-    return config;
+    return result.data as Record<string, any>;
   },
 });
-
-/** Expected env vars:
- * SUPABASE_URL            – Supabase project URL
- * SUPABASE_SERVICE_ROLE_KEY – service-role key (bypasses RLS)
- * ANTHROPIC_API_KEY       – Anthropic API key
- * WHATSAPP_APP_SECRET     – WhatsApp webhook secret
- * API_BASE_URL            – Public base URL for webhooks (e.g. https://example.ngrok.io)
- * PORT                    – HTTP port (default 3001)
- */
