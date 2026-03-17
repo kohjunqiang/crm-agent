@@ -51,6 +51,9 @@ importers:
       '@types/node':
         specifier: ^20
         version: 20.19.35
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
       ts-node:
         specifier: ^10
         version: 10.9.2(@types/node@20.19.35)(typescript@5.9.3)

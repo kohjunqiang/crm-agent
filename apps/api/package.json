@@ -6,7 +6,8 @@
     "dev": "nest start --watch",
     "build": "nest build",
     "start": "node dist/main",
-    "lint": "echo 'no linter configured'"
+    "lint": "echo 'no linter configured'",
+    "register-webhooks": "ts-node --project tsconfig.json scripts/register-webhooks.ts"
   },
   "dependencies": {
     "@agent-crm/shared": "workspace:*",
@@ -23,6 +24,7 @@
   "devDependencies": {
     "@nestjs/cli": "^10",
     "@types/node": "^20",
+    "dotenv": "^17.3.1",
     "ts-node": "^10",
     "typescript": "^5"
   }
