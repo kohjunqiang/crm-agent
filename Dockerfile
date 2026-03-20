@@ -10,7 +10,7 @@ WORKDIR /app
 COPY . .
 RUN pnpm install --frozen-lockfile
 RUN pnpm run --filter=@agent-crm/api build
-RUN pnpm deploy --filter=@agent-crm/api --prod /prod/api
+RUN pnpm deploy --filter=@agent-crm/api --prod --legacy /prod/api
 
 # Stage 3 — production: lean runtime image
 FROM base AS production
