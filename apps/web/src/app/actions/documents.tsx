@@ -1,11 +1,7 @@
 'use server';
 
-import { renderToBuffer } from '@react-pdf/renderer';
 import { createClient } from '@/lib/supabase/server';
 import type { Quotation, Invoice, Receipt } from '@agent-crm/shared';
-import { QuotationTemplate } from '@/lib/pdf/quotation-template';
-import { InvoiceTemplate } from '@/lib/pdf/invoice-template';
-import { ReceiptTemplate } from '@/lib/pdf/receipt-template';
 import { logActivity } from './activities';
 
 async function getUserId() {
@@ -103,7 +99,9 @@ export async function generateQuotation(dealId: string): Promise<Quotation> {
   const dateStr = now.toLocaleDateString('en-SG', { day: 'numeric', month: 'long', year: 'numeric' });
   const validStr = validUntil.toLocaleDateString('en-SG', { day: 'numeric', month: 'long', year: 'numeric' });
 
-  // Generate PDF
+  // Generate PDF (dynamic import to avoid loading native modules at init)
+  const { renderToBuffer } = await import('@react-pdf/renderer');
+  const { QuotationTemplate } = await import('@/lib/pdf/quotation-template');
   const pdfBuffer = await renderToBuffer(
     <QuotationTemplate
       data={{
@@ -210,6 +208,8 @@ export async function generateInvoice(dealId: string): Promise<Invoice> {
   const dateStr = now.toLocaleDateString('en-SG', { day: 'numeric', month: 'long', year: 'numeric' });
   const dueStr = dueDate.toLocaleDateString('en-SG', { day: 'numeric', month: 'long', year: 'numeric' });
 
+  const { renderToBuffer } = await import('@react-pdf/renderer');
+  const { InvoiceTemplate } = await import('@/lib/pdf/invoice-template');
   const pdfBuffer = await renderToBuffer(
     <InvoiceTemplate
       data={{
@@ -324,6 +324,8 @@ export async function generateReceipt(paymentId: string, dealId: string): Promis
     day: 'numeric', month: 'long', year: 'numeric',
   });
 
+  const { renderToBuffer } = await import('@react-pdf/renderer');
+  const { ReceiptTemplate } = await import('@/lib/pdf/receipt-template');
   const pdfBuffer = await renderToBuffer(
     <ReceiptTemplate
       data={{
