@@ -8,4 +8,4 @@ dist
 dev.log
 .planning/
 console*
-page*
+page-*
