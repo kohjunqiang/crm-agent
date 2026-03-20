@@ -11,7 +11,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { getAgentConfig, updateAgentConfig } from '@/app/actions/config';
-import { setTelegramWebhook } from '@/lib/api';
+import { setTelegramWebhook } from '@/app/actions/config';
 import { toast } from 'sonner';
 import { Eye, EyeOff, HelpCircle } from 'lucide-react';
 

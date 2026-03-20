@@ -5,7 +5,7 @@ import type { Contact, ContactStatus, Message } from '@agent-crm/shared';
 import { toast } from 'sonner';
 import { getContact, updateContact, deleteContact } from '@/app/actions/contacts';
 import { getMessages } from '@/app/actions/messages';
-import { sendMessage } from '@/lib/api';
+import { sendMessage } from '@/app/actions/messages';
 import { createClient } from '@/lib/supabase/client';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

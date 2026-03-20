@@ -10,6 +10,29 @@ async function getUserId() {
   return { supabase, userId: user.id };
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+export async function setTelegramWebhook(): Promise<{
+  success: boolean;
+  webhook_url: string;
+}> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token;
+  if (!token) throw new Error('No session');
+  const res = await fetch(`${API_URL}/api/config/telegram/set-webhook`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
 export async function getAgentConfig(): Promise<AgentConfig | null> {
   const { supabase, userId } = await getUserId();
   const { data, error } = await supabase
