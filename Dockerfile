@@ -8,8 +8,7 @@ ENV PATH="$PNPM_HOME:$PATH"
 FROM base AS build
 WORKDIR /app
 COPY . .
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 RUN pnpm run --filter=@agent-crm/api build
 RUN pnpm deploy --filter=@agent-crm/api --prod /prod/api
 
