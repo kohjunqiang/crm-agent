@@ -1,23 +1,22 @@
 'use client';
 
-import type { Contact, ContactStatus } from '@agent-crm/shared';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { useState } from 'react';
+import type { Contact } from '@agent-crm/shared';
+import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ContactCard } from './ContactCard';
+import { Search } from 'lucide-react';
 
 interface ContactListProps {
   contacts: Contact[];
   selectedId: string | null;
   onSelect: (id: string) => void;
+  dealValues?: Map<string, number>;
 }
 
-const STATUS_TABS: { value: string; label: string }[] = [
-  { value: 'all', label: 'All' },
-  { value: 'new', label: 'New' },
-  { value: 'engaged', label: 'Engaged' },
-  { value: 'qualified', label: 'Qualified' },
-  { value: 'converted', label: 'Converted' },
-];
+function getDisplayName(contact: Contact): string {
+  return contact.name || contact.phone || contact.telegram_chat_id || 'Unknown';
+}
 
 function sortByRecent(contacts: Contact[]): Contact[] {
   return [...contacts].sort((a, b) => {
@@ -27,63 +26,55 @@ function sortByRecent(contacts: Contact[]): Contact[] {
   });
 }
 
-function countByStatus(contacts: Contact[], status: string): number {
-  if (status === 'all') return contacts.length;
-  return contacts.filter((c) => c.status === status).length;
-}
+export function ContactList({ contacts, selectedId, onSelect, dealValues }: ContactListProps) {
+  const [search, setSearch] = useState('');
 
-function filterByStatus(contacts: Contact[], status: string): Contact[] {
-  if (status === 'all') return contacts;
-  return contacts.filter((c) => c.status === (status as ContactStatus));
-}
+  const searched = search.trim()
+    ? contacts.filter((c) => {
+        const q = search.toLowerCase();
+        const name = getDisplayName(c).toLowerCase();
+        const phone = (c.phone ?? '').toLowerCase();
+        const tags = (c.tags ?? []).join(' ').toLowerCase();
+        return name.includes(q) || phone.includes(q) || tags.includes(q);
+      })
+    : contacts;
 
-export function ContactList({ contacts, selectedId, onSelect }: ContactListProps) {
-  const sorted = sortByRecent(contacts);
+  const sorted = sortByRecent(searched);
 
   return (
-    <Tabs defaultValue="all" className="flex h-full flex-col">
-      <div className="px-3 pt-3">
-        <TabsList className="w-full">
-          {STATUS_TABS.map((tab) => {
-            const count = countByStatus(sorted, tab.value);
-            return (
-              <TabsTrigger key={tab.value} value={tab.value} className="text-xs">
-                {tab.label}
-                {count > 0 && (
-                  <span className="ml-1 text-[10px] text-muted-foreground">
-                    {count}
-                  </span>
-                )}
-              </TabsTrigger>
-            );
-          })}
-        </TabsList>
+    <div className="flex h-full flex-col">
+      <div className="px-3 py-3">
+        <div className="relative">
+          <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search contacts..."
+            className="h-8 pl-8 text-xs"
+          />
+        </div>
       </div>
-
-      {STATUS_TABS.map((tab) => (
-        <TabsContent key={tab.value} value={tab.value} className="mt-0 flex-1">
-          <ScrollArea className="h-full">
-            <div className="flex flex-col gap-0.5 p-2">
-              {filterByStatus(sorted, tab.value).length === 0 ? (
-                <p className="px-3 py-8 text-center text-sm text-muted-foreground">
-                  {contacts.length === 0
-                    ? 'No contacts yet. Leads will appear when they message you.'
-                    : 'No contacts in this category.'}
-                </p>
-              ) : (
-                filterByStatus(sorted, tab.value).map((contact) => (
-                  <ContactCard
-                    key={contact.id}
-                    contact={contact}
-                    isSelected={selectedId === contact.id}
-                    onClick={() => onSelect(contact.id)}
-                  />
-                ))
-              )}
-            </div>
-          </ScrollArea>
-        </TabsContent>
-      ))}
-    </Tabs>
+      <ScrollArea className="flex-1">
+        <div className="flex flex-col gap-0.5 px-2 pb-2">
+          {sorted.length === 0 ? (
+            <p className="px-3 py-8 text-center text-sm text-muted-foreground">
+              {contacts.length === 0
+                ? 'No contacts yet. Leads will appear when they message you.'
+                : 'No contacts match.'}
+            </p>
+          ) : (
+            sorted.map((contact) => (
+              <ContactCard
+                key={contact.id}
+                contact={contact}
+                isSelected={selectedId === contact.id}
+                onClick={() => onSelect(contact.id)}
+                dealValue={dealValues?.get(contact.id) ?? null}
+              />
+            ))
+          )}
+        </div>
+      </ScrollArea>
+    </div>
   );
 }

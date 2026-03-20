@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { createKnowledgeEntry, updateKnowledgeEntry } from '@/lib/api';
+import { createKnowledgeEntry, updateKnowledgeEntry } from '@/app/actions/knowledge';
 import { toast } from 'sonner';
 
 interface KBEntryModalProps {

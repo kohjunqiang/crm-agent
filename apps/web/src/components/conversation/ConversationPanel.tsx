@@ -3,12 +3,19 @@
 import { useEffect, useState, useCallback } from 'react';
 import type { Contact, ContactStatus, Message } from '@agent-crm/shared';
 import { toast } from 'sonner';
-import { getContact, sendMessage, updateContact, deleteContact } from '@/lib/api';
+import { getContact, updateContact, deleteContact } from '@/app/actions/contacts';
+import { getMessages } from '@/app/actions/messages';
+import { sendMessage } from '@/lib/api';
 import { createClient } from '@/lib/supabase/client';
 import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ConversationHeader } from './ConversationHeader';
 import { MessageThread } from './MessageThread';
 import { MessageInput } from './MessageInput';
+import { ContactDetails } from '@/components/contacts/ContactDetails';
+import { ContactDeals } from '@/components/contacts/ContactDeals';
+import { ContactNotes } from '@/components/contacts/ContactNotes';
+import { ContactTasks } from '@/components/contacts/ContactTasks';
 
 interface ConversationPanelProps {
   contactId: string;
@@ -23,9 +30,12 @@ export function ConversationPanel({ contactId, onDeleted }: ConversationPanelPro
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await getContact(contactId);
-      setContact(data.contact);
-      setMessages(data.messages);
+      const [contact, messages] = await Promise.all([
+        getContact(contactId),
+        getMessages(contactId),
+      ]);
+      setContact(contact);
+      setMessages(messages);
     } catch {
       setContact(null);
       setMessages([]);
@@ -173,15 +183,40 @@ export function ConversationPanel({ contactId, onDeleted }: ConversationPanelPro
       />
       <Separator />
 
-      {/* Message thread */}
-      <MessageThread messages={messages} />
+      <Tabs defaultValue="chat" className="flex flex-1 flex-col overflow-hidden">
+        <TabsList className="mx-3 mt-2 w-fit">
+          <TabsTrigger value="chat">Chat</TabsTrigger>
+          <TabsTrigger value="details">Details</TabsTrigger>
+          <TabsTrigger value="deals">Deals</TabsTrigger>
+          <TabsTrigger value="tasks">Tasks</TabsTrigger>
+          <TabsTrigger value="notes">Notes</TabsTrigger>
+        </TabsList>
 
-      {/* Message input */}
-      <Separator />
-      <MessageInput
-        onSend={handleSend}
-        disabled={contact.agent_enabled}
-      />
+        <TabsContent value="chat" className="flex flex-1 flex-col overflow-hidden mt-0">
+          <MessageThread messages={messages} />
+          <Separator />
+          <MessageInput
+            onSend={handleSend}
+            disabled={contact.agent_enabled}
+          />
+        </TabsContent>
+
+        <TabsContent value="details" className="flex-1 overflow-y-auto p-4 mt-0">
+          <ContactDetails contact={contact} onUpdated={() => { fetchData(); }} />
+        </TabsContent>
+
+        <TabsContent value="deals" className="flex-1 overflow-y-auto p-4 mt-0">
+          <ContactDeals contactId={contactId} />
+        </TabsContent>
+
+        <TabsContent value="tasks" className="flex-1 overflow-y-auto mt-0">
+          <ContactTasks contactId={contactId} />
+        </TabsContent>
+
+        <TabsContent value="notes" className="flex-1 overflow-y-auto p-4 mt-0">
+          <ContactNotes contactId={contactId} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

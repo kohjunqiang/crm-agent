@@ -1,6 +1,5 @@
 import {
   Controller,
-  Get,
   Put,
   Post,
   Body,
@@ -21,12 +20,6 @@ export class AgentConfigController {
     private readonly telegramService: TelegramService,
     private readonly configService: ConfigService,
   ) {}
-
-  @Get()
-  async get(@CurrentUser() user: RequestUser) {
-    const config = await this.agentConfigService.getConfig(user.id);
-    return { config };
-  }
 
   @Put()
   async update(

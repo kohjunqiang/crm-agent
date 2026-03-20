@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import type { KnowledgeBaseEntry } from '@agent-crm/shared';
 import { Button } from '@/components/ui/button';
-import { getKnowledgeEntries, deleteKnowledgeEntry } from '@/lib/api';
+import { getKnowledgeEntries, deleteKnowledgeEntry } from '@/app/actions/knowledge';
 import { KBEntryModal } from './KBEntryModal';
 import { toast } from 'sonner';
 import {
@@ -26,7 +26,7 @@ export function KnowledgeBaseManager() {
   const fetchEntries = useCallback(async () => {
     try {
       const data = await getKnowledgeEntries();
-      setEntries(data.entries);
+      setEntries(data);
     } catch {
       toast.error('Failed to load knowledge base entries');
     } finally {

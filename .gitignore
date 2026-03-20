@@ -7,3 +7,5 @@ dev.log
 .planning/
 .env.local
 **/.env.local
+console*
+page*

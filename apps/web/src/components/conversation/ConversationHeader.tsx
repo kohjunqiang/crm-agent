@@ -4,7 +4,6 @@ import type { Contact, ContactStatus } from '@agent-crm/shared';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -29,8 +28,24 @@ const statuses: { value: ContactStatus; label: string }[] = [
   { value: 'converted', label: 'Converted' },
 ];
 
+const STATUS_DOT_COLORS: Record<string, string> = {
+  new: 'bg-stone-400',
+  engaged: 'bg-amber-400',
+  qualified: 'bg-sky-400',
+  converted: 'bg-emerald-400',
+};
+
 function getDisplayName(contact: Contact): string {
   return contact.name || contact.phone || contact.telegram_chat_id || 'Unknown';
+}
+
+function getInitials(contact: Contact): string {
+  const name = getDisplayName(contact);
+  return name
+    .split(/[\s_-]+/)
+    .slice(0, 2)
+    .map((s) => s[0]?.toUpperCase() ?? '')
+    .join('');
 }
 
 export function ConversationHeader({
@@ -39,76 +54,101 @@ export function ConversationHeader({
   onAgentToggle,
   onDelete,
 }: ConversationHeaderProps) {
+  const tags = contact.tags ?? [];
+
   return (
-    <div className="flex items-center justify-between gap-4 px-4 py-3">
-      {/* Left side: name + channel badge */}
-      <div className="flex items-center gap-2 min-w-0">
-        <h2 className="truncate text-sm font-semibold">
-          {getDisplayName(contact)}
-        </h2>
-        <Badge
-          variant="outline"
+    <div className="flex items-center gap-3 px-4 py-2.5">
+      {/* Avatar */}
+      <div
+        className={cn(
+          'flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white',
+          STATUS_DOT_COLORS[contact.status] ?? 'bg-stone-400',
+        )}
+      >
+        {getInitials(contact)}
+      </div>
+
+      {/* Name + subtitle */}
+      <div className="flex min-w-0 flex-col gap-0.5">
+        <div className="flex items-center gap-2">
+          <span className="truncate text-sm font-semibold">
+            {getDisplayName(contact)}
+          </span>
+          <Badge
+            variant="outline"
+            className={cn(
+              'shrink-0 px-1.5 py-0 text-[10px] font-semibold',
+              contact.channel === 'whatsapp'
+                ? 'border-green-200 bg-green-50 text-green-700'
+                : 'border-blue-200 bg-blue-50 text-blue-700',
+            )}
+          >
+            {contact.channel === 'whatsapp' ? 'WA' : 'TG'}
+          </Badge>
+        </div>
+        <div className="flex items-center gap-1.5">
+          {contact.phone && (
+            <span className="text-[11px] text-muted-foreground">
+              {contact.phone}
+            </span>
+          )}
+          {tags.slice(0, 3).map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full bg-muted px-1.5 py-0 text-[9px] font-medium text-muted-foreground"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex-1" />
+
+      {/* Status dropdown */}
+      <Select
+        value={contact.status}
+        onValueChange={(v) => onStatusChange(v as ContactStatus)}
+      >
+        <SelectTrigger className="h-7 w-[110px] text-xs">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {statuses.map((s) => (
+            <SelectItem key={s.value} value={s.value} className="text-xs">
+              {s.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      {/* Agent toggle */}
+      <div className="flex shrink-0 items-center gap-2">
+        <span
           className={cn(
-            'shrink-0 px-1.5 py-0 text-[10px] font-semibold',
-            contact.channel === 'whatsapp'
-              ? 'border-green-200 bg-green-50 text-green-700'
-              : 'border-blue-200 bg-blue-50 text-blue-700',
+            'text-[11px]',
+            contact.agent_enabled
+              ? 'text-emerald-600'
+              : 'text-muted-foreground',
           )}
         >
-          {contact.channel === 'whatsapp' ? 'WA' : 'TG'}
-        </Badge>
+          {contact.agent_enabled ? 'Agent On' : 'Agent Off'}
+        </span>
+        <Switch
+          checked={contact.agent_enabled}
+          onCheckedChange={onAgentToggle}
+        />
       </div>
 
-      {/* Right side: status dropdown + agent toggle */}
-      <div className="flex shrink-0 items-center gap-4">
-        <Select
-          value={contact.status}
-          onValueChange={(v) => onStatusChange(v as ContactStatus)}
-        >
-          <SelectTrigger className="h-8 w-[130px] text-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {statuses.map((s) => (
-              <SelectItem key={s.value} value={s.value} className="text-xs">
-                {s.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <div className="flex items-center gap-2">
-          <div className="flex flex-col items-end gap-0.5">
-            <Label htmlFor="agent-toggle" className="text-xs font-medium">
-              AI Agent
-            </Label>
-            <span
-              className={cn(
-                'text-[11px]',
-                contact.agent_enabled
-                  ? 'text-green-600'
-                  : 'text-muted-foreground',
-              )}
-            >
-              {contact.agent_enabled ? 'Agent is replying' : 'Agent paused'}
-            </span>
-          </div>
-          <Switch
-            id="agent-toggle"
-            checked={contact.agent_enabled}
-            onCheckedChange={onAgentToggle}
-          />
-        </div>
-
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 text-muted-foreground hover:text-destructive"
-          onClick={onDelete}
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      </div>
+      {/* Delete */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive"
+        onClick={onDelete}
+      >
+        <Trash2 className="h-3.5 w-3.5" />
+      </Button>
     </div>
   );
 }

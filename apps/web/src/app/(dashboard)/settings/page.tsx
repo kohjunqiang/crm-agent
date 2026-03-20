@@ -1,55 +1,39 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+'use client';
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { KnowledgeBaseManager } from '@/components/settings/KnowledgeBaseManager';
 import { AgentPersonaEditor } from '@/components/settings/AgentPersonaEditor';
 import { ChannelConfig } from '@/components/settings/ChannelConfig';
 
 export default function SettingsPage() {
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Settings</h1>
+    <Tabs defaultValue="knowledge" className="flex flex-col gap-4">
+      <TabsList className="w-fit">
+        <TabsTrigger value="knowledge">Knowledge Base</TabsTrigger>
+        <TabsTrigger value="persona">Agent Persona</TabsTrigger>
+        <TabsTrigger value="channels">Channels</TabsTrigger>
+      </TabsList>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Knowledge Base</CardTitle>
-          <CardDescription>
-            Add information your AI agent can reference when responding to
-            customers.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <KnowledgeBaseManager />
-        </CardContent>
-      </Card>
+      <TabsContent value="knowledge" className="mt-0">
+        <p className="mb-4 text-sm text-muted-foreground">
+          Add information your AI agent can reference when responding to customers.
+        </p>
+        <KnowledgeBaseManager />
+      </TabsContent>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Agent Persona</CardTitle>
-          <CardDescription>
-            Configure your AI agent&apos;s personality and behavior.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <AgentPersonaEditor />
-        </CardContent>
-      </Card>
+      <TabsContent value="persona" className="mt-0">
+        <p className="mb-4 text-sm text-muted-foreground">
+          Configure your AI agent&apos;s personality and behavior.
+        </p>
+        <AgentPersonaEditor />
+      </TabsContent>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Channel Configuration</CardTitle>
-          <CardDescription>
-            Manage your messaging channel connections.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ChannelConfig />
-        </CardContent>
-      </Card>
-    </div>
+      <TabsContent value="channels" className="mt-0">
+        <p className="mb-4 text-sm text-muted-foreground">
+          Manage your messaging channel connections.
+        </p>
+        <ChannelConfig />
+      </TabsContent>
+    </Tabs>
   );
 }

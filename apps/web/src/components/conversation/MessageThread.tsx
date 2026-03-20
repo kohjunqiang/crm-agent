@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import type { Message } from '@agent-crm/shared';
 import { MessageBubble } from './MessageBubble';
+import { MessageSquare } from 'lucide-react';
 
 interface MessageThreadProps {
   messages: Message[];
@@ -17,8 +18,12 @@ export function MessageThread({ messages }: MessageThreadProps) {
 
   if (messages.length === 0) {
     return (
-      <div className="flex flex-1 items-center justify-center">
+      <div className="flex flex-1 flex-col items-center justify-center gap-2">
+        <MessageSquare className="h-8 w-8 text-muted-foreground/30" />
         <p className="text-sm text-muted-foreground">No messages yet</p>
+        <p className="text-xs text-muted-foreground/60">
+          Messages will appear here when the conversation starts
+        </p>
       </div>
     );
   }

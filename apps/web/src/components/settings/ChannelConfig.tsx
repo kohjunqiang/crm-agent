@@ -10,7 +10,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { getAgentConfig, updateAgentConfig } from '@/lib/api';
+import { getAgentConfig, updateAgentConfig } from '@/app/actions/config';
+import { setTelegramWebhook } from '@/lib/api';
 import { toast } from 'sonner';
 import { Eye, EyeOff, HelpCircle } from 'lucide-react';
 
@@ -99,19 +100,19 @@ export function ChannelConfig() {
 
   useEffect(() => {
     getAgentConfig()
-      .then((data) => {
-        const c = data.config;
-        setWaPhoneId(c.whatsapp_phone_id ?? '');
-        setWaToken(c.whatsapp_token ?? '');
-        setWaVerifyToken(c.whatsapp_verify_token ?? '');
-        setTgBotToken(c.telegram_bot_token ?? '');
+      .then((config) => {
+        if (!config) return;
+        setWaPhoneId(config.whatsapp_phone_id ?? '');
+        setWaToken(config.whatsapp_token ?? '');
+        setWaVerifyToken(config.whatsapp_verify_token ?? '');
+        setTgBotToken(config.telegram_bot_token ?? '');
         setSavedWa({
-          phoneId: c.whatsapp_phone_id ?? '',
-          token: c.whatsapp_token ?? '',
-          verifyToken: c.whatsapp_verify_token ?? '',
+          phoneId: config.whatsapp_phone_id ?? '',
+          token: config.whatsapp_token ?? '',
+          verifyToken: config.whatsapp_verify_token ?? '',
         });
-        setSavedTgToken(c.telegram_bot_token ?? '');
-        setTgBusinessConnectionId(c.telegram_business_connection_id ?? null);
+        setSavedTgToken(config.telegram_bot_token ?? '');
+        setTgBusinessConnectionId(config.telegram_business_connection_id ?? null);
       })
       .catch(() => toast.error('Failed to load channel config'))
       .finally(() => setLoading(false));
@@ -140,17 +141,23 @@ export function ChannelConfig() {
   async function handleTgSave() {
     setTgSaving(true);
     try {
-      const result = await updateAgentConfig({ telegram_bot_token: tgBotToken });
+      await updateAgentConfig({ telegram_bot_token: tgBotToken });
       setSavedTgToken(tgBotToken);
 
       if (!tgBotToken) {
         toast.success('Telegram disconnected');
-      } else if (result.telegram_webhook?.set) {
-        toast.success('Telegram connected — webhook configured');
-      } else if (result.telegram_webhook && !result.telegram_webhook.set) {
-        toast.warning('Token saved but webhook setup failed. Check your API_BASE_URL.');
       } else {
-        toast.success('Telegram token saved');
+        // Attempt to register the webhook with the NestJS API after saving the token
+        try {
+          const webhookResult = await setTelegramWebhook();
+          if (webhookResult.success) {
+            toast.success('Telegram connected — webhook configured');
+          } else {
+            toast.warning('Token saved but webhook setup failed. Check your API_BASE_URL.');
+          }
+        } catch {
+          toast.warning('Token saved but webhook setup failed. Check your API_BASE_URL.');
+        }
       }
     } catch {
       toast.error('Failed to save Telegram configuration');
@@ -223,9 +230,40 @@ export function ChannelConfig() {
               />
             </div>
           </div>
-          <Button onClick={handleWaSave} disabled={waSaving}>
-            {waSaving ? 'Saving...' : 'Save'}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button onClick={handleWaSave} disabled={waSaving}>
+              {waSaving ? 'Saving...' : 'Save'}
+            </Button>
+            {waConnected && (
+              <Button
+                variant="outline"
+                className="text-destructive hover:text-destructive"
+                disabled={waSaving}
+                onClick={async () => {
+                  if (!confirm('Disconnect WhatsApp? This will clear all credentials. Your agent will stop responding to WhatsApp messages.')) return;
+                  setWaSaving(true);
+                  try {
+                    await updateAgentConfig({
+                      whatsapp_phone_id: '',
+                      whatsapp_token: '',
+                      whatsapp_verify_token: '',
+                    });
+                    setWaPhoneId('');
+                    setWaToken('');
+                    setWaVerifyToken('');
+                    setSavedWa({ phoneId: '', token: '', verifyToken: '' });
+                    toast.success('WhatsApp disconnected');
+                  } catch {
+                    toast.error('Failed to disconnect WhatsApp');
+                  } finally {
+                    setWaSaving(false);
+                  }
+                }}
+              >
+                Disconnect
+              </Button>
+            )}
+          </div>
         </div>
 
         <hr />
@@ -295,9 +333,38 @@ export function ChannelConfig() {
               )}
             </div>
           )}
-          <Button onClick={handleTgSave} disabled={tgSaving}>
-            {tgSaving ? 'Connecting...' : 'Save & Connect'}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button onClick={handleTgSave} disabled={tgSaving}>
+              {tgSaving ? 'Connecting...' : 'Save & Connect'}
+            </Button>
+            {tgConnected && (
+              <Button
+                variant="outline"
+                className="text-destructive hover:text-destructive"
+                disabled={tgSaving}
+                onClick={async () => {
+                  if (!confirm('Disconnect Telegram? This will clear the bot token. Your agent will stop responding to Telegram messages.')) return;
+                  setTgSaving(true);
+                  try {
+                    await updateAgentConfig({
+                      telegram_bot_token: '',
+                      telegram_business_connection_id: null,
+                    });
+                    setTgBotToken('');
+                    setSavedTgToken('');
+                    setTgBusinessConnectionId(null);
+                    toast.success('Telegram disconnected');
+                  } catch {
+                    toast.error('Failed to disconnect Telegram');
+                  } finally {
+                    setTgSaving(false);
+                  }
+                }}
+              >
+                Disconnect
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </TooltipProvider>

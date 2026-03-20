@@ -1,20 +1,20 @@
 'use client';
 
 import type { Contact } from '@agent-crm/shared';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 interface ContactCardProps {
   contact: Contact;
   isSelected: boolean;
   onClick: () => void;
+  dealValue?: number | null;
 }
 
-const statusColors: Record<string, string> = {
-  new: 'bg-gray-100 text-gray-700',
-  engaged: 'bg-blue-100 text-blue-700',
-  qualified: 'bg-amber-100 text-amber-700',
-  converted: 'bg-green-100 text-green-700',
+const STATUS_DOT_COLORS: Record<string, string> = {
+  new: 'bg-stone-400',
+  engaged: 'bg-amber-400',
+  qualified: 'bg-sky-400',
+  converted: 'bg-emerald-400',
 };
 
 function getDisplayName(contact: Contact): string {
@@ -23,8 +23,7 @@ function getDisplayName(contact: Contact): string {
 
 function formatRelativeTime(dateStr: string | null): string {
   if (!dateStr) return '';
-  const now = Date.now();
-  const diff = now - new Date(dateStr).getTime();
+  const diff = Date.now() - new Date(dateStr).getTime();
   const seconds = Math.floor(diff / 1000);
   if (seconds < 60) return 'just now';
   const minutes = Math.floor(seconds / 60);
@@ -42,54 +41,85 @@ function truncate(text: string | null, max: number): string {
   return text.length > max ? text.slice(0, max) + '…' : text;
 }
 
-export function ContactCard({ contact, isSelected, onClick }: ContactCardProps) {
+function formatCurrency(amount: number): string {
+  return new Intl.NumberFormat('en-SG', {
+    style: 'currency',
+    currency: 'SGD',
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+export function ContactCard({ contact, isSelected, onClick, dealValue }: ContactCardProps) {
+  const tags = contact.tags ?? [];
+
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        'flex w-full flex-col gap-1 rounded-lg border px-3 py-3 text-left transition-colors',
+        'flex w-full flex-col gap-1.5 rounded-lg border-l-2 px-3 py-2.5 text-left transition-colors',
         isSelected
-          ? 'border-primary/20 bg-accent'
-          : 'border-transparent hover:bg-accent/50',
+          ? 'border-l-amber-400 bg-accent'
+          : 'border-l-transparent hover:bg-accent/50',
       )}
     >
-      <div className="flex items-center justify-between gap-2">
-        <span className="truncate text-sm font-medium">
+      {/* Row 1: status dot + name + channel + time */}
+      <div className="flex items-center gap-2">
+        <span
+          className={cn(
+            'h-2 w-2 shrink-0 rounded-full',
+            STATUS_DOT_COLORS[contact.status] ?? 'bg-stone-400',
+          )}
+        />
+        <span className="flex-1 truncate text-sm font-medium">
           {getDisplayName(contact)}
         </span>
         <div className="flex shrink-0 items-center gap-1.5">
           {contact.last_message_at && (
-            <span className="text-xs text-muted-foreground">
+            <span className="text-[11px] text-muted-foreground">
               {formatRelativeTime(contact.last_message_at)}
             </span>
           )}
-          <Badge
-            variant="outline"
+          <span
             className={cn(
-              'px-1.5 py-0 text-[10px] font-semibold',
+              'rounded px-1 py-0 text-[9px] font-semibold',
               contact.channel === 'whatsapp'
-                ? 'border-green-200 bg-green-50 text-green-700'
-                : 'border-blue-200 bg-blue-50 text-blue-700',
+                ? 'bg-green-50 text-green-700'
+                : 'bg-blue-50 text-blue-700',
             )}
           >
             {contact.channel === 'whatsapp' ? 'WA' : 'TG'}
-          </Badge>
+          </span>
         </div>
       </div>
-      <div className="flex items-center justify-between gap-2">
+
+      {/* Row 2: message preview */}
+      <div className="pl-4">
         <span className="truncate text-xs text-muted-foreground">
-          {truncate(contact.last_message_preview, 50) || 'No messages yet'}
+          {truncate(contact.last_message_preview, 45) || 'No messages yet'}
         </span>
-        <Badge
-          variant="secondary"
-          className={cn(
-            'px-1.5 py-0 text-[10px]',
-            statusColors[contact.status],
-          )}
-        >
-          {contact.status}
-        </Badge>
+      </div>
+
+      {/* Row 3: tags + deal value (always rendered for consistent height) */}
+      <div className="flex min-h-4 items-center gap-1.5 pl-4">
+        {tags.slice(0, 2).map((tag) => (
+          <span
+            key={tag}
+            className="rounded-full bg-muted px-2 py-0 text-[10px] font-medium text-muted-foreground"
+          >
+            {tag}
+          </span>
+        ))}
+        {tags.length > 2 && (
+          <span className="text-[10px] text-muted-foreground">
+            +{tags.length - 2}
+          </span>
+        )}
+        {dealValue != null && dealValue > 0 && (
+          <span className="ml-auto shrink-0 text-[11px] font-medium text-foreground">
+            {formatCurrency(dealValue)}
+          </span>
+        )}
       </div>
     </button>
   );

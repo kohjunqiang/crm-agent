@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { getAgentConfig, updateAgentConfig } from '@/lib/api';
+import { getAgentConfig, updateAgentConfig } from '@/app/actions/config';
 import { toast } from 'sonner';
 
 export function AgentPersonaEditor() {
@@ -14,7 +14,7 @@ export function AgentPersonaEditor() {
 
   useEffect(() => {
     getAgentConfig()
-      .then((data) => setSystemPrompt(data.config.system_prompt))
+      .then((config) => setSystemPrompt(config?.system_prompt ?? ''))
       .catch(() => toast.error('Failed to load agent config'))
       .finally(() => setLoading(false));
   }, []);

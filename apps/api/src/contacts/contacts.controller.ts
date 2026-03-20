@@ -1,9 +1,6 @@
 import {
   Controller,
-  Get,
-  Patch,
   Post,
-  Delete,
   Param,
   Body,
   Logger,
@@ -26,34 +23,6 @@ export class ContactsController {
     private readonly whatsAppService: WhatsAppService,
     private readonly telegramService: TelegramService,
   ) {}
-
-  @Get()
-  async list(@CurrentUser() user: RequestUser) {
-    const contacts = await this.contactsService.listContacts(user.id);
-    return { contacts };
-  }
-
-  @Get(':id')
-  async get(@CurrentUser() user: RequestUser, @Param('id') id: string) {
-    const contact = await this.contactsService.getContact(user.id, id);
-    const messages = await this.messagesService.getMessages(id, user.id);
-    return { contact, messages };
-  }
-
-  @Patch(':id')
-  async update(
-    @CurrentUser() user: RequestUser,
-    @Param('id') id: string,
-    @Body() body: { status?: string; agent_enabled?: boolean; name?: string },
-  ) {
-    return this.contactsService.updateContact(user.id, id, body);
-  }
-
-  @Delete(':id')
-  async delete(@CurrentUser() user: RequestUser, @Param('id') id: string) {
-    await this.contactsService.deleteContact(user.id, id);
-    return { ok: true };
-  }
 
   @Post(':id/messages')
   async sendMessage(
