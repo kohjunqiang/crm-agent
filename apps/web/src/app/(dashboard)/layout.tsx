@@ -67,7 +67,7 @@ export default async function DashboardLayout({
           </div>
         </div>
       </aside>
-      <main className="ml-64 flex-1 p-6">{children}</main>
+      <main className="ml-64 min-h-screen flex-1 p-6">{children}</main>
     </div>
   );
 }
