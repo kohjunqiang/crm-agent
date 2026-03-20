@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Plus, AlertCircle } from 'lucide-react';
+import { getContactName } from '@/lib/format';
 
 function isOverdue(task: Task): boolean {
   if (task.status === 'done' || !task.due_date) return false;
@@ -27,13 +28,6 @@ function formatDueDate(dateStr: string | null): string {
     month: 'short',
     day: 'numeric',
   });
-}
-
-function getContactName(contacts: Contact[], contactId: string | null): string | null {
-  if (!contactId) return null;
-  const c = contacts.find((c) => c.id === contactId);
-  if (!c) return null;
-  return c.name || c.phone || null;
 }
 
 interface TasksDueProps {
@@ -145,7 +139,7 @@ export function TasksDue({ initialTasks, contacts }: TasksDueProps) {
         ) : (
           sorted.slice(0, 8).map((task) => {
             const overdue = isOverdue(task);
-            const contactName = getContactName(contacts, task.contact_id);
+            const contactName = task.contact_id ? getContactName(contacts, task.contact_id) : null;
 
             return (
               <div

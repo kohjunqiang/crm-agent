@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { KnowledgeService } from '../knowledge/knowledge.service';
 import { ContactsService } from '../contacts/contacts.service';
+import type { ContactStatus } from '@agent-crm/shared';
 
 @Injectable()
 export class ToolExecutorService {
@@ -61,7 +62,7 @@ export class ToolExecutorService {
     reason: string,
   ): Promise<string> {
     await this.contactsService.updateContact(userId, contactId, {
-      status: status as any,
+      status: status as ContactStatus,
     });
     this.logger.log(`Status updated to ${status}. Reason: ${reason}`);
     return `Contact status updated to "${status}". Reason: ${reason}`;

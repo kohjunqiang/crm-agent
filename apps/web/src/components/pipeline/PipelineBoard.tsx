@@ -16,63 +16,8 @@ import {
   DollarSign,
   Package,
 } from 'lucide-react';
-
-const ACTIVE_STAGES: DealStage[] = [
-  'discovery',
-  'consultation',
-  'quotation_sent',
-  'confirmed',
-  'ordered',
-  'fulfilled',
-];
-
-const STAGE_LABELS: Record<DealStage, string> = {
-  discovery: 'Discovery',
-  consultation: 'Consultation',
-  quotation_sent: 'Quotation Sent',
-  confirmed: 'Confirmed',
-  ordered: 'Ordered',
-  fulfilled: 'Fulfilled',
-  completed: 'Completed',
-  lost: 'Lost',
-};
-
-const STAGE_BAR_COLORS: Record<DealStage, string> = {
-  discovery: 'bg-gray-300',
-  consultation: 'bg-blue-300',
-  quotation_sent: 'bg-amber-300',
-  confirmed: 'bg-violet-300',
-  ordered: 'bg-orange-300',
-  fulfilled: 'bg-teal-300',
-  completed: 'bg-green-300',
-  lost: 'bg-red-300',
-};
-
-const STAGE_BORDER_COLORS: Record<DealStage, string> = {
-  discovery: 'border-l-gray-400',
-  consultation: 'border-l-blue-400',
-  quotation_sent: 'border-l-amber-400',
-  confirmed: 'border-l-violet-400',
-  ordered: 'border-l-orange-400',
-  fulfilled: 'border-l-teal-400',
-  completed: 'border-l-green-400',
-  lost: 'border-l-red-400',
-};
-
-function formatCurrency(amount: number | null): string {
-  if (amount === null) return '—';
-  return new Intl.NumberFormat('en-SG', {
-    style: 'currency',
-    currency: 'SGD',
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
-
-function getContactName(contacts: Contact[], contactId: string): string {
-  const c = contacts.find((c) => c.id === contactId);
-  if (!c) return 'Unknown';
-  return c.name || c.phone || 'Unknown';
-}
+import { formatCurrency, getContactName } from '@/lib/format';
+import { ACTIVE_STAGES, STAGE_LABELS, STAGE_BAR_COLORS, STAGE_BORDER_COLORS } from '@/lib/stages';
 
 interface PipelineBoardProps {
   deals: Deal[];

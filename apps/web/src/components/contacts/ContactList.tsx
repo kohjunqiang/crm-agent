@@ -6,16 +6,13 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ContactCard } from './ContactCard';
 import { Search } from 'lucide-react';
+import { getDisplayName } from '@/lib/format';
 
 interface ContactListProps {
   contacts: Contact[];
   selectedId: string | null;
   onSelect: (id: string) => void;
   dealValues?: Map<string, number>;
-}
-
-function getDisplayName(contact: Contact): string {
-  return contact.name || contact.phone || contact.telegram_chat_id || 'Unknown';
 }
 
 function sortByRecent(contacts: Contact[]): Contact[] {

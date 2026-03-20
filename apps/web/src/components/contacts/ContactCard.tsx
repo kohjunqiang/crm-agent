@@ -2,6 +2,7 @@
 
 import type { Contact } from '@agent-crm/shared';
 import { cn } from '@/lib/utils';
+import { getDisplayName, formatRelativeTime, formatCurrency } from '@/lib/format';
 
 interface ContactCardProps {
   contact: Contact;
@@ -17,36 +18,9 @@ const STATUS_DOT_COLORS: Record<string, string> = {
   converted: 'bg-emerald-400',
 };
 
-function getDisplayName(contact: Contact): string {
-  return contact.name || contact.phone || contact.telegram_chat_id || 'Unknown';
-}
-
-function formatRelativeTime(dateStr: string | null): string {
-  if (!dateStr) return '';
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const seconds = Math.floor(diff / 1000);
-  if (seconds < 60) return 'just now';
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h`;
-  const days = Math.floor(hours / 24);
-  if (days < 30) return `${days}d`;
-  const months = Math.floor(days / 30);
-  return `${months}mo`;
-}
-
 function truncate(text: string | null, max: number): string {
   if (!text) return '';
   return text.length > max ? text.slice(0, max) + '…' : text;
-}
-
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-SG', {
-    style: 'currency',
-    currency: 'SGD',
-    maximumFractionDigits: 0,
-  }).format(amount);
 }
 
 export function ContactCard({ contact, isSelected, onClick, dealValue }: ContactCardProps) {

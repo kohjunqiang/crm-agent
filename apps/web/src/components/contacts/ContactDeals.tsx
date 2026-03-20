@@ -21,6 +21,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import { formatCurrency } from '@/lib/format';
+import { ALL_STAGES, STAGE_LABELS, STAGE_BADGE_COLORS } from '@/lib/stages';
 import {
   ChevronDown,
   ChevronUp,
@@ -36,53 +38,6 @@ import {
   Loader2,
 } from 'lucide-react';
 
-// ----------------------------------------------------------------
-// Stage metadata
-// ----------------------------------------------------------------
-const ALL_STAGES: DealStage[] = [
-  'discovery',
-  'consultation',
-  'quotation_sent',
-  'confirmed',
-  'ordered',
-  'fulfilled',
-  'completed',
-  'lost',
-];
-
-const STAGE_LABELS: Record<DealStage, string> = {
-  discovery: 'Discovery',
-  consultation: 'Consultation',
-  quotation_sent: 'Quotation Sent',
-  confirmed: 'Confirmed',
-  ordered: 'Ordered',
-  fulfilled: 'Fulfilled',
-  completed: 'Completed',
-  lost: 'Lost',
-};
-
-const STAGE_COLORS: Record<DealStage, string> = {
-  discovery: 'bg-gray-100 text-gray-700',
-  consultation: 'bg-blue-100 text-blue-700',
-  quotation_sent: 'bg-amber-100 text-amber-700',
-  confirmed: 'bg-violet-100 text-violet-700',
-  ordered: 'bg-orange-100 text-orange-700',
-  fulfilled: 'bg-teal-100 text-teal-700',
-  completed: 'bg-green-100 text-green-700',
-  lost: 'bg-red-100 text-red-700',
-};
-
-// ----------------------------------------------------------------
-// Helpers
-// ----------------------------------------------------------------
-function formatAmount(amount: number | null, currency?: string): string {
-  if (amount === null) return '—';
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: currency || 'SGD',
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
 
 function totalPaid(payments: Payment[]): number {
   return payments.reduce((sum, p) => sum + p.amount, 0);
@@ -102,9 +57,9 @@ function LineItemRow({ item, onRemove }: LineItemRowProps) {
     <div className="flex items-center gap-2 rounded border px-3 py-2 text-xs">
       <span className="min-w-0 flex-1 truncate font-medium">{item.name}</span>
       <span className="shrink-0 text-muted-foreground">
-        {item.qty ?? 0} × {formatAmount(item.price ?? 0)}
+        {item.qty ?? 0} × {formatCurrency(item.price ?? 0)}
       </span>
-      <span className="shrink-0 font-medium">{formatAmount(subtotal)}</span>
+      <span className="shrink-0 font-medium">{formatCurrency(subtotal)}</span>
       <button
         type="button"
         onClick={onRemove}
@@ -241,7 +196,7 @@ function LineItemsEditor({ products, onUpdate }: LineItemsEditorProps) {
           ))}
           <div className="flex justify-between border-t pt-1.5 text-xs font-medium">
             <span>Total</span>
-            <span>{formatAmount(total)}</span>
+            <span>{formatCurrency(total)}</span>
           </div>
         </div>
       )}
@@ -291,7 +246,7 @@ function PaymentRow({ payment, dealId, onReceiptGenerated }: PaymentRowProps) {
   return (
     <div className="flex items-center justify-between gap-2 rounded border px-3 py-2 text-xs">
       <div className="flex min-w-0 flex-col gap-0.5">
-        <span className="font-medium">{formatAmount(payment.amount)}</span>
+        <span className="font-medium">{formatCurrency(payment.amount)}</span>
         {payment.label && (
           <span className="text-muted-foreground">{payment.label}</span>
         )}
@@ -621,12 +576,12 @@ function DealItem({ deal, onStageChange, onProductsUpdate, onDelete }: DealItemP
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <span className="flex items-center gap-0.5 font-medium text-foreground">
               <DollarSign className="h-3 w-3" />
-              {formatAmount(deal.amount, deal.currency)}
+              {formatCurrency(deal.amount, deal.currency)}
             </span>
             {paymentsLoaded && paid > 0 && (
               <>
                 <span>·</span>
-                <span>{formatAmount(paid)} paid</span>
+                <span>{formatCurrency(paid)} paid</span>
               </>
             )}
           </div>
@@ -663,7 +618,7 @@ function DealItem({ deal, onStageChange, onProductsUpdate, onDelete }: DealItemP
         <div className="flex shrink-0 items-center gap-2">
           <Badge
             variant="secondary"
-            className={cn('px-1.5 py-0 text-[10px]', STAGE_COLORS[deal.stage])}
+            className={cn('px-1.5 py-0 text-[10px]', STAGE_BADGE_COLORS[deal.stage])}
           >
             {STAGE_LABELS[deal.stage]}
           </Badge>
@@ -741,7 +696,7 @@ function DealItem({ deal, onStageChange, onProductsUpdate, onDelete }: DealItemP
                     <div className="flex justify-between border-t pt-1.5 text-xs font-medium">
                       <span>Total paid</span>
                       <span>
-                        {formatAmount(paid)} / {formatAmount(deal.amount, deal.currency)}
+                        {formatCurrency(paid)} / {formatCurrency(deal.amount, deal.currency)}
                       </span>
                     </div>
                   )}
