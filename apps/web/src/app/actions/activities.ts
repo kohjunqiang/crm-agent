@@ -18,7 +18,7 @@ export async function getActivities(contactId?: string): Promise<Activity[]> {
     .select('*')
     .eq('user_id', userId)
     .order('created_at', { ascending: false })
-    .limit(50);
+    .limit(200);
 
   if (contactId) {
     query = query.eq('contact_id', contactId);

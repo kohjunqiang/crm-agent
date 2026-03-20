@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { LogoutButton } from './logout-button';
 import { SidebarNav } from './sidebar-nav';
+import { MobileNav } from './mobile-nav';
 
 function UserAvatar({ email }: { email: string }) {
   const initials = email
@@ -25,49 +26,66 @@ export default async function DashboardLayout({
 }) {
   const supabase = await createClient();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (!user) {
     redirect('/login');
   }
 
-  const userEmail = session.user.email ?? '';
+  const userEmail = user.email ?? '';
   const userName = userEmail.split('@')[0] ?? 'User';
+
+  const sidebarBrand = (
+    <>
+      <div className="px-5 py-5">
+        <p className="text-base font-semibold text-foreground">Drapeworks</p>
+        <p className="text-[11px] text-muted-foreground">AgentCRM</p>
+      </div>
+      <div className="mx-4 border-t border-sidebar-border" />
+    </>
+  );
+
+  const sidebarUser = (
+    <div className="border-t border-sidebar-border px-4 py-3">
+      <div className="flex items-center gap-2.5">
+        <UserAvatar email={userEmail} />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <span className="truncate text-sm font-medium capitalize">
+            {userName}
+          </span>
+          <span className="truncate text-[11px] text-muted-foreground">
+            {userEmail}
+          </span>
+        </div>
+        <LogoutButton />
+      </div>
+    </div>
+  );
 
   return (
     <div className="flex min-h-screen">
-      <aside className="fixed left-0 top-0 flex h-screen w-64 flex-col border-r border-sidebar-border bg-sidebar">
-        {/* Brand header */}
-        <div className="px-5 py-5">
-          <p className="text-base font-semibold text-foreground">Drapeworks</p>
-          <p className="text-[11px] text-muted-foreground">AgentCRM</p>
-        </div>
-
-        <div className="mx-4 border-t border-sidebar-border" />
-
-        {/* Navigation */}
+      {/* Mobile top bar + drawer */}
+      <MobileNav>
+        {sidebarBrand}
         <div className="mt-4 flex-1">
           <SidebarNav />
         </div>
+        {sidebarUser}
+      </MobileNav>
 
-        {/* User profile */}
-        <div className="border-t border-sidebar-border px-4 py-3">
-          <div className="flex items-center gap-2.5">
-            <UserAvatar email={userEmail} />
-            <div className="flex min-w-0 flex-1 flex-col">
-              <span className="truncate text-sm font-medium capitalize">
-                {userName}
-              </span>
-              <span className="truncate text-[11px] text-muted-foreground">
-                {userEmail}
-              </span>
-            </div>
-            <LogoutButton />
-          </div>
+      {/* Desktop sidebar */}
+      <aside className="fixed left-0 top-0 hidden h-screen w-64 flex-col border-r border-sidebar-border bg-sidebar md:flex">
+        {sidebarBrand}
+        <div className="mt-4 flex-1">
+          <SidebarNav />
         </div>
+        {sidebarUser}
       </aside>
-      <main className="ml-64 min-h-screen flex-1 p-6">{children}</main>
+
+      <main className="ml-0 min-h-screen flex-1 p-4 pt-16 md:ml-64 md:p-6">
+        {children}
+      </main>
     </div>
   );
 }

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentCRM Mobile Wireframe</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f5f5f5; padding: 40px 20px; color: #1a1a1a; }
+
+  h1 { text-align: center; font-size: 24px; margin-bottom: 8px; font-weight: 700; }
+  .subtitle { text-align: center; color: #888; font-size: 14px; margin-bottom: 48px; }
+
+  .row { display: flex; gap: 60px; justify-content: center; flex-wrap: wrap; margin-bottom: 64px; }
+  .screen-group { display: flex; flex-direction: column; align-items: center; }
+  .label { font-size: 13px; font-weight: 600; color: #666; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .annotation { font-size: 11px; color: #999; margin-top: 8px; max-width: 280px; text-align: center; line-height: 1.4; }
+
+  /* Phone frame */
+  .phone { width: 280px; height: 560px; border: 2px solid #ccc; border-radius: 24px; overflow: hidden; background: #fff; position: relative; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+
+  /* Desktop frame */
+  .desktop { width: 720px; height: 420px; border: 2px solid #ccc; border-radius: 12px; overflow: hidden; background: #fff; position: relative; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+
+  /* Shared wireframe elements */
+  .topbar { height: 48px; background: #f8f8f8; border-bottom: 1px solid #e5e5e5; display: flex; align-items: center; padding: 0 14px; gap: 10px; }
+  .hamburger { width: 22px; height: 18px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; }
+  .hamburger span { display: block; height: 2px; background: #333; border-radius: 1px; }
+  .brand { font-size: 14px; font-weight: 700; }
+  .brand-sub { font-size: 9px; color: #999; }
+
+  .sidebar { width: 180px; background: #f8f8f8; border-right: 1px solid #e5e5e5; height: 100%; position: absolute; left: 0; top: 0; display: flex; flex-direction: column; padding-top: 16px; }
+  .sidebar .brand-block { padding: 0 16px 14px; border-bottom: 1px solid #e5e5e5; margin-bottom: 12px; }
+  .nav-item { display: flex; align-items: center; gap: 8px; padding: 8px 16px; font-size: 12px; color: #666; }
+  .nav-item.active { background: #eee; color: #111; font-weight: 600; border-radius: 6px; margin: 0 8px; padding: 8px; }
+  .nav-icon { width: 16px; height: 16px; background: #ccc; border-radius: 3px; flex-shrink: 0; }
+  .nav-item.active .nav-icon { background: #999; }
+  .user-block { margin-top: auto; padding: 12px 16px; border-top: 1px solid #e5e5e5; display: flex; align-items: center; gap: 8px; }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; background: #ddd; flex-shrink: 0; }
+  .user-name { font-size: 11px; font-weight: 600; }
+  .user-email { font-size: 9px; color: #999; }
+
+  .content { padding: 14px; }
+  .desktop .content { margin-left: 180px; padding: 16px; }
+
+  /* Wireframe blocks */
+  .block { background: #f0f0f0; border: 1px dashed #ccc; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #888; font-weight: 500; }
+  .block.solid { border-style: solid; background: #f5f5f5; }
+
+  .kpi-grid { display: grid; gap: 8px; margin-bottom: 12px; }
+  .kpi-grid.mobile { grid-template-columns: 1fr 1fr; }
+  .kpi-grid.desktop { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .kpi { height: 56px; }
+
+  .attention { height: 48px; margin-bottom: 12px; }
+
+  .cards-grid { display: grid; gap: 8px; }
+  .cards-grid.mobile { grid-template-columns: 1fr; }
+  .cards-grid.desktop { grid-template-columns: 1fr 1fr 1fr; }
+  .card-block { height: 90px; }
+  .card-block.tall { height: 70px; }
+
+  .calendar-block { height: 60px; margin-top: 8px; }
+
+  /* Conversations */
+  .conv-list { display: flex; flex-direction: column; gap: 6px; padding: 14px; height: calc(100% - 48px); }
+  .conv-item { height: 52px; border-radius: 8px; flex-shrink: 0; }
+  .conv-search { height: 32px; margin-bottom: 4px; border-radius: 6px; }
+
+  .conv-split { display: flex; height: calc(100% - 0px); }
+  .conv-left { width: 200px; border-right: 1px solid #e5e5e5; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+  .conv-right { flex: 1; display: flex; flex-direction: column; }
+  .conv-header { height: 48px; border-bottom: 1px solid #e5e5e5; display: flex; align-items: center; padding: 0 14px; }
+  .conv-messages { flex: 1; padding: 12px; display: flex; flex-direction: column; gap: 8px; justify-content: flex-end; }
+  .msg { border-radius: 12px; padding: 8px 10px; font-size: 9px; color: #888; max-width: 70%; }
+  .msg.in { background: #f0f0f0; align-self: flex-start; }
+  .msg.out { background: #e8f0fe; align-self: flex-end; }
+  .conv-input { height: 44px; border-top: 1px solid #e5e5e5; display: flex; align-items: center; padding: 0 12px; }
+  .conv-input .block { flex: 1; height: 30px; border-radius: 15px; }
+
+  .back-btn { font-size: 11px; color: #666; display: flex; align-items: center; gap: 4px; padding: 0 4px; }
+  .back-arrow { font-size: 14px; }
+
+  /* Sheet overlay */
+  .sheet-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.3); z-index: 10; }
+  .sheet { position: absolute; left: 0; top: 0; bottom: 0; width: 220px; background: #fff; z-index: 20; display: flex; flex-direction: column; padding-top: 14px; box-shadow: 4px 0 20px rgba(0,0,0,0.1); }
+  .sheet .nav-item.active { margin: 0 6px; padding: 8px 10px; }
+
+  /* Section headers */
+  .section-title { font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 6px; margin-top: 20px; }
+  .section-desc { font-size: 13px; color: #888; text-align: center; margin-bottom: 32px; }
+
+  /* Arrow between screens */
+  .arrow { font-size: 28px; color: #ccc; align-self: center; margin-top: 60px; }
+
+  /* Responsive */
+  @media (max-width: 800px) {
+    .row { gap: 32px; }
+    .desktop { width: 100%; max-width: 720px; height: auto; aspect-ratio: 720/420; }
+  }
+</style>
+</head>
+<body>
+
+<h1>AgentCRM — Mobile Responsive Wireframe</h1>
+<p class="subtitle">Left: mobile (375px) &nbsp;|&nbsp; Right: desktop (1440px) &nbsp;|&nbsp; Breakpoint: 768px</p>
+
+<!-- ============================================ -->
+<!-- OVERVIEW PAGE -->
+<!-- ============================================ -->
+<p class="section-title">Overview Page</p>
+<p class="section-desc">KPI cards → 2 cols on mobile, 4 cols desktop. Bottom cards stack vertically on mobile.</p>
+
+<div class="row">
+  <!-- Mobile Overview -->
+  <div class="screen-group">
+    <span class="label">Mobile</span>
+    <div class="phone">
+      <div class="topbar">
+        <div class="hamburger"><span></span><span></span><span></span></div>
+        <div><div class="brand">Drapeworks</div></div>
+      </div>
+      <div class="content" style="overflow-y: auto; height: calc(100% - 48px);">
+        <div style="font-size: 13px; font-weight: 600; margin-bottom: 2px;">Good morning, Jason</div>
+        <div style="font-size: 10px; color: #999; margin-bottom: 12px;">Here's your pipeline overview</div>
+
+        <div class="kpi-grid mobile">
+          <div class="block kpi">Active Deals</div>
+          <div class="block kpi">Pipeline Value</div>
+          <div class="block kpi">This Month</div>
+          <div class="block kpi">Outstanding</div>
+        </div>
+
+        <div class="block attention">Needs Attention</div>
+
+        <div class="cards-grid mobile">
+          <div class="block card-block tall">Pipeline Board</div>
+          <div class="block card-block tall">Tasks Due</div>
+          <div class="block card-block tall">Recent Activity</div>
+        </div>
+        <div class="block calendar-block">Activity Calendar</div>
+      </div>
+    </div>
+    <p class="annotation">Top bar with hamburger menu. Grids reflow to 2-col (KPIs) and 1-col (cards). Scrollable.</p>
+  </div>
+
+  <!-- Desktop Overview -->
+  <div class="screen-group">
+    <span class="label">Desktop</span>
+    <div class="desktop">
+      <div class="sidebar">
+        <div class="brand-block">
+          <div class="brand">Drapeworks</div>
+          <div class="brand-sub">AgentCRM</div>
+        </div>
+        <div class="nav-item active"><div class="nav-icon"></div>Overview</div>
+        <div class="nav-item"><div class="nav-icon"></div>Conversations</div>
+        <div class="nav-item"><div class="nav-icon"></div>Settings</div>
+        <div class="user-block">
+          <div class="avatar"></div>
+          <div><div class="user-name">Jason</div><div class="user-email">jason@drapeworks</div></div>
+        </div>
+      </div>
+      <div class="content" style="margin-left: 180px; padding: 16px;">
+        <div style="font-size: 13px; font-weight: 600; margin-bottom: 2px;">Good morning, Jason</div>
+        <div style="font-size: 10px; color: #999; margin-bottom: 10px;">Here's your pipeline overview</div>
+        <div class="kpi-grid desktop">
+          <div class="block kpi" style="height: 48px;">Active Deals</div>
+          <div class="block kpi" style="height: 48px;">Pipeline Value</div>
+          <div class="block kpi" style="height: 48px;">This Month</div>
+          <div class="block kpi" style="height: 48px;">Outstanding</div>
+        </div>
+        <div class="block attention" style="height: 36px; margin-bottom: 10px;">Needs Attention</div>
+        <div class="cards-grid desktop">
+          <div class="block card-block" style="height: 68px;">Pipeline Board</div>
+          <div class="block card-block" style="height: 68px;">Tasks Due</div>
+          <div class="block card-block" style="height: 68px;">Recent Activity</div>
+        </div>
+      </div>
+    </div>
+    <p class="annotation">Fixed sidebar always visible. 4-col KPI grid, 3-col bottom section. Unchanged from current.</p>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- MOBILE NAV DRAWER -->
+<!-- ============================================ -->
+<p class="section-title">Mobile Navigation Drawer</p>
+<p class="section-desc">Hamburger opens a Sheet from the left. Tap outside or navigate to close.</p>
+
+<div class="row">
+  <div class="screen-group">
+    <span class="label">Drawer Open</span>
+    <div class="phone">
+      <div class="topbar" style="z-index: 5; position: relative;">
+        <div class="hamburger"><span></span><span></span><span></span></div>
+        <div class="brand">Drapeworks</div>
+      </div>
+      <div class="sheet-overlay"></div>
+      <div class="sheet">
+        <div style="padding: 0 16px 12px; border-bottom: 1px solid #e5e5e5; margin-bottom: 10px;">
+          <div class="brand">Drapeworks</div>
+          <div class="brand-sub">AgentCRM</div>
+        </div>
+        <div class="nav-item active"><div class="nav-icon"></div>Overview</div>
+        <div class="nav-item"><div class="nav-icon"></div>Conversations</div>
+        <div class="nav-item"><div class="nav-icon"></div>Settings</div>
+        <div class="user-block">
+          <div class="avatar"></div>
+          <div><div class="user-name">Jason</div><div class="user-email">jason@drapeworks</div></div>
+        </div>
+      </div>
+    </div>
+    <p class="annotation">Sheet slides in from left with overlay backdrop. Same nav items as desktop sidebar. Auto-closes on route change.</p>
+  </div>
+
+  <div class="screen-group">
+    <span class="label">Drawer Closed</span>
+    <div class="phone">
+      <div class="topbar">
+        <div class="hamburger"><span></span><span></span><span></span></div>
+        <div class="brand">Drapeworks</div>
+      </div>
+      <div class="content">
+        <div class="block" style="height: 100%; min-height: 200px;">Page content<br>full width</div>
+      </div>
+    </div>
+    <p class="annotation">Clean top bar with hamburger. Full-width content area underneath.</p>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- CONVERSATIONS PAGE -->
+<!-- ============================================ -->
+<p class="section-title">Conversations Page</p>
+<p class="section-desc">Mobile: full-width list → full-width conversation with tabs (Chat, Details, Deals, Tasks, Notes). Same tabs on both mobile &amp; desktop.</p>
+
+<div class="row">
+  <!-- Mobile: Contact List -->
+  <div class="screen-group">
+    <span class="label">Mobile — Contact List</span>
+    <div class="phone">
+      <div class="topbar">
+        <div class="hamburger"><span></span><span></span><span></span></div>
+        <div class="brand">Drapeworks</div>
+      </div>
+      <div class="conv-list">
+        <div class="block conv-search">Search contacts...</div>
+        <div class="block conv-item solid">Ahmad — "Looking for curtains..."</div>
+        <div class="block conv-item solid" style="background: #e8f0fe; border-color: #c5d8f8;">Siti — "Quote accepted!"</div>
+        <div class="block conv-item solid">Raj — "When is installation?"</div>
+        <div class="block conv-item solid">Maria — "Can I see samples?"</div>
+        <div class="block conv-item solid">David — "Thanks for the update"</div>
+      </div>
+    </div>
+    <p class="annotation">Full-width contact list. Tap a contact to switch to conversation view.</p>
+  </div>
+
+  <!-- Arrow -->
+  <div class="arrow">tap contact</div>
+</div>
+
+<!-- Mobile Conversation Views (Chat tab + Details tab) -->
+<div class="row">
+  <!-- Mobile: Chat Tab -->
+  <div class="screen-group">
+    <span class="label">Mobile — Chat Tab</span>
+    <div class="phone">
+      <!-- Back + Contact header -->
+      <div class="topbar" style="gap: 6px;">
+        <div class="back-btn"><span class="back-arrow">←</span></div>
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: #a8d8a8; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #fff; font-weight: 700;">ST</div>
+        <div style="flex: 1; min-width: 0;">
+          <div style="font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px;">Siti <span style="font-size: 8px; background: #e8f5e9; color: #2e7d32; padding: 1px 4px; border-radius: 3px;">WA</span></div>
+          <div style="font-size: 9px; color: #999;">+60 12-345 6789</div>
+        </div>
+        <div style="font-size: 8px; color: #999; display: flex; align-items: center; gap: 3px;">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #4caf50;"></span>Agent On
+        </div>
+      </div>
+      <!-- Tabs -->
+      <div style="display: flex; gap: 0; border-bottom: 1px solid #e5e5e5; padding: 0 12px;">
+        <div style="font-size: 10px; font-weight: 600; padding: 8px 8px; border-bottom: 2px solid #111; color: #111;">Chat</div>
+        <div style="font-size: 10px; padding: 8px 8px; color: #999;">Details</div>
+        <div style="font-size: 10px; padding: 8px 8px; color: #999;">Deals</div>
+        <div style="font-size: 10px; padding: 8px 8px; color: #999;">Tasks</div>
+        <div style="font-size: 10px; padding: 8px 8px; color: #999;">Notes</div>
+      </div>
+      <!-- Messages -->
+      <div class="conv-right" style="height: calc(100% - 48px - 34px);">
+        <div class="conv-messages">
+          <div class="msg in">Hi, I'd like a quote for roller blinds</div>
+          <div class="msg out">Sure! What size windows?</div>
+          <div class="msg in">3 windows, 1.5m x 2m each</div>
+          <div class="msg out">I'll prepare a quotation for you</div>
+        </div>
+        <div class="conv-input">
+          <div class="block" style="flex: 1; height: 30px; border-radius: 15px;">Type a message...</div>
+        </div>
+      </div>
+    </div>
+    <p class="annotation">Full header with avatar, name, channel badge, agent status. Same 5 tabs as desktop — tap to switch.</p>
+  </div>
+
+  <!-- Mobile: Details Tab -->
+  <div class="screen-group">
+    <span class="label">Mobile — Details Tab</span>
+    <div class="phone">
+      <!-- Back + Contact header -->
+      <div class="topbar" style="gap: 6px;">
+        <div class="back-btn"><span class="back-arrow">←</span></div>
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: #a8d8a8; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #fff; font-weight: 700;">ST</div>
+        <div style="flex: 1; min-width: 0;">
+          <div style="font-size: 11px; font-weight: 600;">Siti</div>
+          <div style="font-size: 9px; color: #999;">+60 12-345 6789</div>
+        </div>
+      </div>
+      <!-- Tabs -->
+      <div style="display: flex; gap: 0; border-bottom: 1px solid #e5e5e5; padding: 0 12px;">
+        <div style="font-size: 10px; padding: 8px 8px; color: #999;">Chat</div>
+        <div style="font-size: 10px; font-weight: 600; padding: 8px 8px; border-bottom: 2px solid #111; color: #111;">Details</div>
+        <div style="font-size: 10px; padding: 8px 8px; color: #999;">Deals</div>
+        <div style="font-size: 10px; padding: 8px 8px; color: #999;">Tasks</div>
+        <div style="font-size: 10px; padding: 8px 8px; color: #999;">Notes</div>
+      </div>
+      <!-- Details content -->
+      <div style="padding: 14px; overflow-y: auto; height: calc(100% - 48px - 34px);">
+        <div class="block solid" style="height: 36px; margin-bottom: 8px;">Name: Siti Aminah</div>
+        <div class="block solid" style="height: 36px; margin-bottom: 8px;">Phone: +60 12-345 6789</div>
+        <div class="block solid" style="height: 36px; margin-bottom: 8px;">Channel: WhatsApp</div>
+        <div class="block solid" style="height: 36px; margin-bottom: 8px;">Status: Qualified</div>
+        <div class="block solid" style="height: 36px; margin-bottom: 8px;">Tags: residential, KL</div>
+        <div class="block solid" style="height: 36px;">Source: Website</div>
+      </div>
+    </div>
+    <p class="annotation">Same tab bar — Details tab shows contact fields. Deals, Tasks, Notes tabs work identically.</p>
+  </div>
+
+  <!-- Mobile: Deals Tab -->
+  <div class="screen-group">
+    <span class="label">Mobile — Deals Tab</span>
+    <div class="phone">
+      <div class="topbar" style="gap: 6px;">
+        <div class="back-btn"><span class="back-arrow">←</span></div>
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: #a8d8a8; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #fff; font-weight: 700;">ST</div>
+        <div style="flex: 1; min-width: 0;">
+          <div style="font-size: 11px; font-weight: 600;">Siti</div>
+          <div style="font-size: 9px; color: #999;">+60 12-345 6789</div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 0; border-bottom: 1px solid #e5e5e5; padding: 0 12px;">
+        <div style="font-size: 10px; padding: 8px 8px; color: #999;">Chat</div>
+        <div style="font-size: 10px; padding: 8px 8px; color: #999;">Details</div>
+        <div style="font-size: 10px; font-weight: 600; padding: 8px 8px; border-bottom: 2px solid #111; color: #111;">Deals</div>
+        <div style="font-size: 10px; padding: 8px 8px; color: #999;">Tasks</div>
+        <div style="font-size: 10px; padding: 8px 8px; color: #999;">Notes</div>
+      </div>
+      <div style="padding: 14px; overflow-y: auto; height: calc(100% - 48px - 34px);">
+        <div class="block solid" style="height: 64px; margin-bottom: 8px; flex-direction: column; padding: 8px;">
+          <div style="font-size: 10px; font-weight: 600;">Roller Blinds x3</div>
+          <div style="font-size: 9px; color: #999;">RM 2,400 · Quotation Sent</div>
+        </div>
+        <div class="block solid" style="height: 64px; flex-direction: column; padding: 8px;">
+          <div style="font-size: 10px; font-weight: 600;">Curtain Rods</div>
+          <div style="font-size: 9px; color: #999;">RM 800 · Deposit Paid</div>
+        </div>
+      </div>
+    </div>
+    <p class="annotation">Deals tab shows all deals for this contact. Full functionality — same as desktop.</p>
+  </div>
+</div>
+
+<!-- Desktop Conversations -->
+<div class="row">
+  <div class="screen-group">
+    <span class="label">Desktop — Side by Side (unchanged)</span>
+    <div class="desktop">
+      <div class="sidebar">
+        <div class="brand-block">
+          <div class="brand">Drapeworks</div>
+          <div class="brand-sub">AgentCRM</div>
+        </div>
+        <div class="nav-item"><div class="nav-icon"></div>Overview</div>
+        <div class="nav-item active"><div class="nav-icon"></div>Conversations</div>
+        <div class="nav-item"><div class="nav-icon"></div>Settings</div>
+        <div class="user-block">
+          <div class="avatar"></div>
+          <div><div class="user-name">Jason</div><div class="user-email">jason@drapeworks</div></div>
+        </div>
+      </div>
+      <div class="conv-split" style="margin-left: 180px;">
+        <div class="conv-left">
+          <div class="block" style="height: 28px; border-radius: 6px; flex-shrink: 0;">Search...</div>
+          <div class="block solid" style="height: 44px; flex-shrink: 0;">Ahmad</div>
+          <div class="block solid" style="height: 44px; flex-shrink: 0; background: #e8f0fe; border-color: #c5d8f8;">Siti ✓</div>
+          <div class="block solid" style="height: 44px; flex-shrink: 0;">Raj</div>
+          <div class="block solid" style="height: 44px; flex-shrink: 0;">Maria</div>
+        </div>
+        <div class="conv-right">
+          <div class="conv-header">
+            <span style="font-size: 12px; font-weight: 600;">Siti</span>
+            <span style="font-size: 8px; background: #e8f5e9; color: #2e7d32; padding: 1px 4px; border-radius: 3px; margin-left: 4px;">WA</span>
+            <span style="margin-left: auto; font-size: 9px; color: #999;">Status: Qualified · Agent On</span>
+          </div>
+          <!-- Tabs row -->
+          <div style="display: flex; gap: 0; border-bottom: 1px solid #e5e5e5; padding: 0 12px;">
+            <div style="font-size: 10px; font-weight: 600; padding: 6px 8px; border-bottom: 2px solid #111; color: #111;">Chat</div>
+            <div style="font-size: 10px; padding: 6px 8px; color: #999;">Details</div>
+            <div style="font-size: 10px; padding: 6px 8px; color: #999;">Deals</div>
+            <div style="font-size: 10px; padding: 6px 8px; color: #999;">Tasks</div>
+            <div style="font-size: 10px; padding: 6px 8px; color: #999;">Notes</div>
+          </div>
+          <div class="conv-messages">
+            <div class="msg in">Hi, I'd like a quote</div>
+            <div class="msg out">Sure! What size?</div>
+            <div class="msg in">3 windows, 1.5m x 2m</div>
+          </div>
+          <div class="conv-input">
+            <div class="block" style="flex: 1; height: 28px; border-radius: 14px;">Type a message...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="annotation">Same tab system on desktop. Contact list + conversation panel side by side. Full feature parity.</p>
+  </div>
+</div>
+
+</body>
+</html>

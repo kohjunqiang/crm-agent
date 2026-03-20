@@ -184,7 +184,7 @@ export function ConversationPanel({ contactId, onDeleted }: ConversationPanelPro
       <Separator />
 
       <Tabs defaultValue="chat" className="flex flex-1 flex-col overflow-hidden">
-        <TabsList className="mx-3 mt-2 w-fit">
+        <TabsList className="mx-3 mt-2 w-[calc(100%-1.5rem)] md:w-fit">
           <TabsTrigger value="chat">Chat</TabsTrigger>
           <TabsTrigger value="details">Details</TabsTrigger>
           <TabsTrigger value="deals">Deals</TabsTrigger>

@@ -8,7 +8,7 @@ import { ChannelConfig } from '@/components/settings/ChannelConfig';
 export default function SettingsPage() {
   return (
     <Tabs defaultValue="knowledge" className="flex flex-col gap-4">
-      <TabsList className="w-fit">
+      <TabsList className="w-full md:w-fit">
         <TabsTrigger value="knowledge">Knowledge Base</TabsTrigger>
         <TabsTrigger value="persona">Agent Persona</TabsTrigger>
         <TabsTrigger value="channels">Channels</TabsTrigger>

@@ -57,11 +57,11 @@ export function ConversationHeader({
   const tags = contact.tags ?? [];
 
   return (
-    <div className="flex items-center gap-3 px-4 py-2.5">
+    <div className="flex items-center gap-2 px-3 py-2 md:gap-3 md:px-4 md:py-2.5">
       {/* Avatar */}
       <div
         className={cn(
-          'flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white',
+          'flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white md:h-9 md:w-9',
           STATUS_DOT_COLORS[contact.status] ?? 'bg-stone-400',
         )}
       >
@@ -110,7 +110,7 @@ export function ConversationHeader({
         value={contact.status}
         onValueChange={(v) => onStatusChange(v as ContactStatus)}
       >
-        <SelectTrigger className="h-7 w-[110px] text-xs">
+        <SelectTrigger className="h-7 w-[90px] text-xs md:w-[110px]">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -126,7 +126,7 @@ export function ConversationHeader({
       <div className="flex shrink-0 items-center gap-2">
         <span
           className={cn(
-            'text-[11px]',
+            'hidden text-[11px] md:inline',
             contact.agent_enabled
               ? 'text-emerald-600'
               : 'text-muted-foreground',
