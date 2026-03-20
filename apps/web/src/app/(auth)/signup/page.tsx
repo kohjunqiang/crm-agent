@@ -43,7 +43,7 @@ export default function SignupPage() {
   }
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="text-2xl">Create your account</CardTitle>
       </CardHeader>

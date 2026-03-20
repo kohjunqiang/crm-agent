@@ -43,7 +43,7 @@ export default function LoginPage() {
   }
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="text-2xl">Sign in to AgentCRM</CardTitle>
       </CardHeader>
