@@ -37,6 +37,8 @@ import {
   Download,
   Loader2,
 } from 'lucide-react';
+import { ProductPicker } from '@/components/products/ProductPicker';
+import { LineItemSpecForm } from './LineItemSpecForm';
 
 
 function totalPaid(payments: Payment[]): number {
@@ -49,25 +51,52 @@ function totalPaid(payments: Payment[]): number {
 interface LineItemRowProps {
   item: DealProduct;
   onRemove: () => void;
+  onSpecsChange: (specs: Partial<DealProduct>) => void;
+  specsOpen: boolean;
+  onSpecsToggle: () => void;
 }
 
-function LineItemRow({ item, onRemove }: LineItemRowProps) {
+function LineItemRow({ item, onRemove, onSpecsChange, specsOpen, onSpecsToggle }: LineItemRowProps) {
   const subtotal = (item.qty ?? 1) * (item.price ?? 0);
+  const specFields = {
+    width_cm: item.width_cm,
+    drop_cm: item.drop_cm,
+    room_name: item.room_name,
+    window_position: item.window_position,
+    fixing_type: item.fixing_type,
+    stack_direction: item.stack_direction,
+    lining_type: item.lining_type,
+    motorization: item.motorization,
+    notes: item.notes,
+  };
   return (
-    <div className="flex items-center gap-2 rounded border px-3 py-2 text-xs">
-      <span className="min-w-0 flex-1 truncate font-medium">{item.name}</span>
-      <span className="shrink-0 text-muted-foreground">
-        {item.qty ?? 0} × {formatCurrency(item.price ?? 0)}
-      </span>
-      <span className="shrink-0 font-medium">{formatCurrency(subtotal)}</span>
-      <button
-        type="button"
-        onClick={onRemove}
-        className="shrink-0 text-muted-foreground hover:text-destructive"
-        aria-label={`Remove ${item.name}`}
-      >
-        <X className="h-3 w-3" />
-      </button>
+    <div className="rounded border text-xs">
+      <div className="flex items-center gap-2 px-3 py-2">
+        <span className="min-w-0 flex-1 truncate font-medium">{item.name}</span>
+        {item.product_id && (
+          <Badge variant="secondary" className="shrink-0 px-1.5 py-0 text-[10px]">
+            Catalog
+          </Badge>
+        )}
+        <span className="shrink-0 text-muted-foreground">
+          {item.qty ?? 0} × {formatCurrency(item.price ?? 0)}
+        </span>
+        <span className="shrink-0 font-medium">{formatCurrency(subtotal)}</span>
+        <button
+          type="button"
+          onClick={onRemove}
+          className="shrink-0 text-muted-foreground hover:text-destructive"
+          aria-label={`Remove ${item.name}`}
+        >
+          <X className="h-3 w-3" />
+        </button>
+      </div>
+      <LineItemSpecForm
+        specs={specFields}
+        onChange={(updated) => onSpecsChange(updated)}
+        isOpen={specsOpen}
+        onToggle={onSpecsToggle}
+      />
     </div>
   );
 }
@@ -84,6 +113,17 @@ function AddLineItemForm({ onAdd }: AddLineItemFormProps) {
   const [name, setName] = useState('');
   const [qty, setQty] = useState('1');
   const [price, setPrice] = useState('');
+  const [productId, setProductId] = useState<string | undefined>(undefined);
+  const [variantId, setVariantId] = useState<string | undefined>(undefined);
+
+  const handleProductSelect = (item: { product_id?: string; variant_id?: string; name: string; price?: number }) => {
+    setName(item.name);
+    setProductId(item.product_id);
+    setVariantId(item.variant_id);
+    if (item.price !== undefined) {
+      setPrice(String(item.price));
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,10 +132,14 @@ function AddLineItemForm({ onAdd }: AddLineItemFormProps) {
       name: name.trim(),
       qty: parseInt(qty) || 1,
       price: parseFloat(price) || 0,
+      product_id: productId,
+      variant_id: variantId,
     });
     setName('');
     setQty('1');
     setPrice('');
+    setProductId(undefined);
+    setVariantId(undefined);
     setOpen(false);
   };
 
@@ -115,40 +159,47 @@ function AddLineItemForm({ onAdd }: AddLineItemFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-2 rounded border p-2">
-      <div className="flex gap-1.5">
-        <Input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Product name"
-          className="h-7 flex-1 text-xs"
-          autoFocus
-          required
-        />
-        <Input
-          type="number"
-          value={qty}
-          onChange={(e) => setQty(e.target.value)}
-          placeholder="Qty"
-          className="h-7 w-14 text-xs"
-          min={1}
-        />
-        <Input
-          type="number"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          placeholder="Price"
-          className="h-7 w-20 text-xs"
-          min={0}
-          step="0.01"
-        />
-      </div>
+      {/* Product picker — replaces plain name input */}
+      <ProductPicker onSelect={handleProductSelect} placeholder="Search catalog or type item name..." />
+      {/* Show selected name + qty/price inputs once a name is set */}
+      {name && (
+        <div className="flex gap-1.5">
+          <span className="flex h-7 flex-1 items-center truncate rounded border bg-muted px-2 text-xs font-medium">
+            {name}
+          </span>
+          <Input
+            type="number"
+            value={qty}
+            onChange={(e) => setQty(e.target.value)}
+            placeholder="Qty"
+            className="h-7 w-14 text-xs"
+            min={1}
+          />
+          <Input
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            placeholder="Price"
+            className="h-7 w-20 text-xs"
+            min={0}
+            step="0.01"
+          />
+        </div>
+      )}
       <div className="flex items-center justify-end gap-1.5">
         <Button
           type="button"
           variant="ghost"
           size="sm"
           className="h-6 px-2 text-xs"
-          onClick={() => setOpen(false)}
+          onClick={() => {
+            setOpen(false);
+            setName('');
+            setQty('1');
+            setPrice('');
+            setProductId(undefined);
+            setVariantId(undefined);
+          }}
         >
           Cancel
         </Button>
@@ -174,6 +225,7 @@ interface LineItemsEditorProps {
 }
 
 function LineItemsEditor({ products, onUpdate }: LineItemsEditorProps) {
+  const [openSpecIndices, setOpenSpecIndices] = useState<Set<number>>(new Set());
   const total = products.reduce((sum, p) => sum + (p.qty ?? 1) * (p.price ?? 0), 0);
 
   const handleAdd = async (item: DealProduct) => {
@@ -181,7 +233,25 @@ function LineItemsEditor({ products, onUpdate }: LineItemsEditorProps) {
   };
 
   const handleRemove = async (index: number) => {
+    setOpenSpecIndices((prev) => {
+      const next = new Set<number>();
+      prev.forEach((i) => { if (i !== index) next.add(i > index ? i - 1 : i); });
+      return next;
+    });
     await onUpdate(products.filter((_, i) => i !== index));
+  };
+
+  const handleSpecsChange = async (index: number, specs: Partial<DealProduct>) => {
+    const updated = products.map((p, i) => (i === index ? { ...p, ...specs } : p));
+    await onUpdate(updated);
+  };
+
+  const toggleSpecForm = (index: number) => {
+    setOpenSpecIndices((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) { next.delete(index); } else { next.add(index); }
+      return next;
+    });
   };
 
   return (
@@ -192,7 +262,14 @@ function LineItemsEditor({ products, onUpdate }: LineItemsEditorProps) {
       ) : (
         <div className="flex flex-col gap-1.5">
           {products.map((item, i) => (
-            <LineItemRow key={i} item={item} onRemove={() => handleRemove(i)} />
+            <LineItemRow
+              key={i}
+              item={item}
+              onRemove={() => handleRemove(i)}
+              onSpecsChange={(specs) => handleSpecsChange(i, specs)}
+              specsOpen={openSpecIndices.has(i)}
+              onSpecsToggle={() => toggleSpecForm(i)}
+            />
           ))}
           <div className="flex justify-between border-t pt-1.5 text-xs font-medium">
             <span>Total</span>

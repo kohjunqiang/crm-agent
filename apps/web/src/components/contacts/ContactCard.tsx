@@ -11,11 +11,18 @@ interface ContactCardProps {
   dealValue?: number | null;
 }
 
-const STATUS_DOT_COLORS: Record<string, string> = {
-  new: 'bg-stone-400',
-  engaged: 'bg-amber-400',
-  qualified: 'bg-sky-400',
-  converted: 'bg-emerald-400',
+const STATUS_BADGE_STYLES: Record<string, string> = {
+  new: 'bg-blue-50 text-blue-700',
+  engaged: 'bg-amber-50 text-amber-700',
+  qualified: 'bg-sky-50 text-sky-700',
+  converted: 'bg-emerald-50 text-emerald-700',
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  new: 'New',
+  engaged: 'Engaged',
+  qualified: 'Qualified',
+  converted: 'Converted',
 };
 
 function truncate(text: string | null, max: number): string {
@@ -37,14 +44,16 @@ export function ContactCard({ contact, isSelected, onClick, dealValue }: Contact
           : 'border-l-transparent hover:bg-accent/50',
       )}
     >
-      {/* Row 1: status dot + name + channel + time */}
+      {/* Row 1: status badge + name + channel + time */}
       <div className="flex items-center gap-2">
         <span
           className={cn(
-            'h-2 w-2 shrink-0 rounded-full',
-            STATUS_DOT_COLORS[contact.status] ?? 'bg-stone-400',
+            'shrink-0 rounded px-1.5 py-0 text-[9px] font-semibold',
+            STATUS_BADGE_STYLES[contact.status] ?? 'bg-stone-50 text-stone-700',
           )}
-        />
+        >
+          {STATUS_LABELS[contact.status] ?? contact.status}
+        </span>
         <span className="flex-1 truncate text-sm font-medium">
           {getDisplayName(contact)}
         </span>
@@ -68,14 +77,14 @@ export function ContactCard({ contact, isSelected, onClick, dealValue }: Contact
       </div>
 
       {/* Row 2: message preview */}
-      <div className="pl-4">
+      <div>
         <span className="truncate text-xs text-muted-foreground">
           {truncate(contact.last_message_preview, 45) || 'No messages yet'}
         </span>
       </div>
 
-      {/* Row 3: tags + deal value (always rendered for consistent height) */}
-      <div className="flex min-h-4 items-center gap-1.5 pl-4">
+      {/* Row 3: tags + deal value */}
+      <div className="flex min-h-4 items-center gap-1.5">
         {tags.slice(0, 2).map((tag) => (
           <span
             key={tag}

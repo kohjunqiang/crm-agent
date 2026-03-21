@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentCRM — Before / After Wireframe</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f5f5f5; padding: 40px 20px; color: #1a1a1a; }
+  h1 { text-align: center; font-size: 24px; margin-bottom: 8px; font-weight: 700; }
+  .subtitle { text-align: center; color: #888; font-size: 14px; margin-bottom: 48px; }
+
+  .issue { max-width: 1100px; margin: 0 auto 64px; }
+  .issue-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .issue-num { background: #111; color: #fff; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+  .issue-title { font-size: 16px; font-weight: 700; }
+  .issue-desc { font-size: 13px; color: #888; margin-bottom: 4px; line-height: 1.5; }
+  .affects { font-size: 11px; margin-bottom: 16px; }
+  .affects-tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-weight: 600; font-size: 10px; }
+  .affects-mobile { background: #ede9fe; color: #5b21b6; }
+  .affects-desktop { background: #dbeafe; color: #1e40af; }
+
+  .view-row { margin-bottom: 20px; }
+  .view-label { font-size: 12px; font-weight: 700; color: #555; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 4px; border-left: 3px solid #ddd; }
+
+  .compare { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; align-items: flex-start; }
+  .side { display: flex; flex-direction: column; align-items: center; }
+  .side-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; padding: 2px 10px; border-radius: 4px; }
+  .side-label.before { background: #fee2e2; color: #991b1b; }
+  .side-label.after { background: #dcfce7; color: #166534; }
+  .caption { font-size: 11px; color: #999; margin-top: 8px; max-width: 320px; text-align: center; line-height: 1.4; }
+
+  .phone { width: 280px; border: 2px solid #ccc; border-radius: 24px; overflow: hidden; background: #fff; position: relative; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+  .desktop { width: 460px; border: 2px solid #ccc; border-radius: 10px; overflow: hidden; background: #fff; position: relative; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+
+  .topbar { height: 42px; background: #fafafa; border-bottom: 1px solid #e5e5e5; display: flex; align-items: center; padding: 0 12px; gap: 8px; }
+  .hamburger { width: 20px; height: 16px; display: flex; flex-direction: column; justify-content: space-between; }
+  .hamburger span { display: block; height: 2px; background: #333; border-radius: 1px; }
+  .brand { font-size: 13px; font-weight: 700; }
+
+  .floating-avatar { position: absolute; bottom: 14px; left: 14px; width: 36px; height: 36px; border-radius: 50%; background: #333; z-index: 10; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+
+  .block { background: #f0f0f0; border: 1px dashed #ccc; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #888; font-weight: 500; }
+  .block.solid { border-style: solid; background: #f7f7f7; }
+
+  .problem-zone { border: 2px solid #ef4444; border-radius: 8px; position: relative; }
+  .problem-zone::after { content: "ISSUE"; position: absolute; top: -8px; right: 6px; background: #ef4444; color: #fff; font-size: 8px; font-weight: 700; padding: 1px 5px; border-radius: 3px; }
+  .fix-zone { border: 2px solid #22c55e; border-radius: 8px; position: relative; }
+  .fix-zone::after { content: "FIXED"; position: absolute; top: -8px; right: 6px; background: #22c55e; color: #fff; font-size: 8px; font-weight: 700; padding: 1px 5px; border-radius: 3px; }
+
+  .arrow-between { font-size: 24px; color: #ccc; align-self: center; margin-top: 40px; }
+
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; display: inline-block; }
+  .status-badge { font-size: 8px; padding: 1px 6px; border-radius: 3px; font-weight: 600; display: inline-block; }
+  .badge-engaged { background: #fef3c7; color: #92400e; }
+  .badge-new { background: #dbeafe; color: #1e40af; }
+  .ch-badge { font-size: 7px; padding: 1px 4px; border-radius: 3px; font-weight: 600; display: inline-block; }
+  .ch-tg { background: #e0f2fe; color: #0369a1; }
+
+  .msg { border-radius: 10px; padding: 6px 8px; font-size: 9px; color: #666; max-width: 65%; }
+  .msg.in { background: #f0f0f0; align-self: flex-start; }
+  .msg.out { background: #e8f0fe; align-self: flex-end; }
+
+  .tabs { display: flex; border-bottom: 1px solid #e5e5e5; padding: 0 10px; }
+  .tab { font-size: 9px; padding: 6px 6px; color: #999; }
+  .tab.active { font-weight: 600; color: #111; border-bottom: 2px solid #111; }
+
+  .mini-sidebar { width: 110px; background: #fafafa; border-right: 1px solid #e5e5e5; height: 100%; position: absolute; left: 0; top: 0; padding: 8px 0; display: flex; flex-direction: column; }
+  .mini-sidebar .sb-brand { font-size: 10px; font-weight: 700; padding: 0 8px 6px; border-bottom: 1px solid #e5e5e5; margin-bottom: 4px; }
+  .mini-sidebar .sb-item { font-size: 9px; padding: 4px 8px; color: #888; }
+  .mini-sidebar .sb-item.active { background: #eee; color: #111; font-weight: 600; margin: 0 4px; padding: 4px; border-radius: 3px; }
+
+  .separator { border: none; border-top: 1px solid #e5e5e5; margin: 8px 0; max-width: 1100px; margin-left: auto; margin-right: auto; }
+</style>
+</head>
+<body>
+
+<h1>AgentCRM — Before / After Comparison</h1>
+<p class="subtitle">Each issue shown with before/after for every affected view (mobile &amp; desktop)</p>
+
+
+<!-- ============================================ -->
+<!-- ISSUE #1: Floating avatar (MOBILE ONLY) -->
+<!-- ============================================ -->
+<div class="issue">
+  <div class="issue-header">
+    <span class="issue-num">#1</span>
+    <span class="issue-title">Floating avatar overlaps input & content</span>
+  </div>
+  <p class="issue-desc">The user avatar floats bottom-left on every mobile page, covering the message input and client list.</p>
+  <p class="affects"><span class="affects-tag affects-mobile">Mobile only</span></p>
+
+  <div class="view-row">
+    <div class="view-label">Mobile</div>
+    <div class="compare">
+      <div class="side">
+        <span class="side-label before">Before</span>
+        <div class="phone" style="height: 400px;">
+          <div class="topbar"><div class="hamburger"><span></span><span></span><span></span></div><div class="brand">Drapeworks</div></div>
+          <div style="display: flex; flex-direction: column; height: calc(100% - 42px);">
+            <div class="tabs"><div class="tab active">Chat</div><div class="tab">Details</div><div class="tab">Deals</div><div class="tab">Tasks</div><div class="tab">Notes</div></div>
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 10px; gap: 6px;">
+              <div class="msg in">Hi, looking for curtains</div>
+              <div class="msg out">Sure! What size?</div>
+              <div class="msg in">1.5m x 2m each</div>
+            </div>
+            <div class="problem-zone" style="height: 42px; border-top: 1px solid #e5e5e5; display: flex; align-items: center; padding: 0 12px; margin: 0 4px 4px;">
+              <div class="block" style="flex: 1; height: 28px; border-radius: 14px; opacity: 0.5;">Type a message...</div>
+            </div>
+          </div>
+          <div class="floating-avatar">N</div>
+        </div>
+        <p class="caption">Avatar covers the input field. Can't tap to type.</p>
+      </div>
+      <div class="arrow-between">→</div>
+      <div class="side">
+        <span class="side-label after">After</span>
+        <div class="phone" style="height: 400px;">
+          <div class="topbar"><div class="hamburger"><span></span><span></span><span></span></div><div class="brand">Drapeworks</div><div style="margin-left:auto;font-size:10px;color:#666;font-weight:500;">Clients</div></div>
+          <div style="display: flex; flex-direction: column; height: calc(100% - 42px);">
+            <div class="tabs"><div class="tab active">Chat</div><div class="tab">Details</div><div class="tab">Deals</div><div class="tab">Tasks</div><div class="tab">Notes</div></div>
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 10px; gap: 6px;">
+              <div class="msg in">Hi, looking for curtains</div>
+              <div class="msg out">Sure! What size?</div>
+              <div class="msg in">1.5m x 2m each</div>
+            </div>
+            <div class="fix-zone" style="height: 42px; border-top: 1px solid #e5e5e5; display: flex; align-items: center; padding: 0 10px; gap: 6px; margin: 0 4px 4px;">
+              <div class="block" style="flex: 1; height: 28px; border-radius: 14px;">Type a message...</div>
+              <div style="width:26px;height:26px;background:#111;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="color:#fff;font-size:10px;">→</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="caption">No floating avatar. User info in sidebar drawer only. Full-width input.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================ -->
+<!-- ISSUE #2: Delete icon close to toggle (BOTH) -->
+<!-- ============================================ -->
+<div class="issue">
+  <div class="issue-header">
+    <span class="issue-num">#2</span>
+    <span class="issue-title">Delete icon right next to agent toggle — easy misclick</span>
+  </div>
+  <p class="issue-desc">Trash icon sits directly beside the agent toggle. On mobile especially, users can accidentally delete a client when toggling the agent.</p>
+  <p class="affects"><span class="affects-tag affects-mobile">Mobile</span> <span class="affects-tag affects-desktop">Desktop</span></p>
+
+  <div class="view-row">
+    <div class="view-label">Mobile</div>
+    <div class="compare">
+      <div class="side">
+        <span class="side-label before">Before</span>
+        <div class="phone" style="height: 70px;">
+          <div style="display: flex; align-items: center; gap: 6px; padding: 10px 12px;">
+            <span style="font-size: 13px; color: #666;">←</span>
+            <div style="width:24px;height:24px;border-radius:50%;background:#fbbf24;flex-shrink:0;"></div>
+            <div style="flex: 1;"><div style="font-size: 11px; font-weight: 600;">SW</div></div>
+            <div class="problem-zone" style="display: flex; align-items: center; gap: 5px; padding: 3px 6px;">
+              <span style="font-size:9px;color:#999;">Engage</span>
+              <div style="width:26px;height:14px;background:#ddd;border-radius:7px;"></div>
+              <span style="font-size:13px;color:#ccc;">🗑</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="arrow-between" style="margin-top:16px;">→</div>
+      <div class="side">
+        <span class="side-label after">After</span>
+        <div class="phone" style="height: 70px;">
+          <div style="display: flex; align-items: center; gap: 6px; padding: 10px 12px;">
+            <span style="font-size: 13px; color: #666;">←</span>
+            <div style="width:24px;height:24px;border-radius:50%;background:#fbbf24;flex-shrink:0;"></div>
+            <div style="flex: 1;"><div style="font-size: 11px; font-weight: 600;">SW</div></div>
+            <div class="fix-zone" style="display: flex; align-items: center; gap: 6px; padding: 3px 6px;">
+              <div style="display:flex;align-items:center;gap:4px;background:#f5f5f5;padding:2px 7px;border-radius:10px;"><span style="font-size:9px;color:#666;">AI Agent</span><div style="width:26px;height:14px;background:#ddd;border-radius:7px;"></div></div>
+              <span style="font-size:13px;color:#ccc;padding-left:4px;border-left:1px solid #e5e5e5;">···</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="view-row">
+    <div class="view-label">Desktop</div>
+    <div class="compare">
+      <div class="side">
+        <span class="side-label before">Before</span>
+        <div class="desktop" style="height: 56px;">
+          <div style="margin-left: 110px; display: flex; align-items: center; gap: 8px; padding: 12px 14px;">
+            <div style="width:24px;height:24px;border-radius:50%;background:#fbbf24;flex-shrink:0;"></div>
+            <span style="font-size:11px;font-weight:600;">SW</span>
+            <span class="ch-badge ch-tg">TG</span>
+            <div style="margin-left: auto;"></div>
+            <div class="problem-zone" style="display: flex; align-items: center; gap: 6px; padding: 3px 6px;">
+              <span style="font-size:9px;color:#999;">Engaged</span>
+              <div style="width:26px;height:14px;background:#ddd;border-radius:7px;"></div>
+              <span style="font-size:9px;color:#999;">Agent Off</span>
+              <div style="width:26px;height:14px;background:#ddd;border-radius:7px;"></div>
+              <span style="font-size:13px;color:#ccc;">🗑</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="arrow-between" style="margin-top:10px;">→</div>
+      <div class="side">
+        <span class="side-label after">After</span>
+        <div class="desktop" style="height: 56px;">
+          <div style="margin-left: 110px; display: flex; align-items: center; gap: 8px; padding: 12px 14px;">
+            <div style="width:24px;height:24px;border-radius:50%;background:#fbbf24;flex-shrink:0;"></div>
+            <span style="font-size:11px;font-weight:600;">SW</span>
+            <span class="ch-badge ch-tg">TG</span>
+            <span class="status-badge badge-engaged">Engaged</span>
+            <div style="margin-left: auto;"></div>
+            <div class="fix-zone" style="display: flex; align-items: center; gap: 6px; padding: 3px 6px;">
+              <div style="display:flex;align-items:center;gap:4px;background:#f5f5f5;padding:2px 8px;border-radius:10px;"><span style="font-size:9px;color:#666;">AI Agent</span><div style="width:26px;height:14px;background:#ddd;border-radius:7px;"></div></div>
+              <span style="font-size:13px;color:#ccc;padding-left:6px;border-left:1px solid #e5e5e5;">···</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================ -->
+<!-- ISSUE #3: No Add Client (BOTH) -->
+<!-- ============================================ -->
+<div class="issue">
+  <div class="issue-header">
+    <span class="issue-num">#3</span>
+    <span class="issue-title">No way to add a new client</span>
+  </div>
+  <p class="issue-desc">The client list has no "Add" button. Users can only wait for inbound messages.</p>
+  <p class="affects"><span class="affects-tag affects-mobile">Mobile</span> <span class="affects-tag affects-desktop">Desktop</span></p>
+
+  <div class="view-row">
+    <div class="view-label">Mobile</div>
+    <div class="compare">
+      <div class="side">
+        <span class="side-label before">Before</span>
+        <div class="phone" style="height: 80px;">
+          <div style="padding: 10px;">
+            <div class="problem-zone" style="padding: 6px;"><div class="block" style="height: 28px; border-radius: 6px;">Search contacts...</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="arrow-between" style="margin-top:16px;">→</div>
+      <div class="side">
+        <span class="side-label after">After</span>
+        <div class="phone" style="height: 80px;">
+          <div style="padding: 10px;">
+            <div class="fix-zone" style="display: flex; gap: 6px; padding: 6px;">
+              <div class="block" style="flex: 1; height: 28px; border-radius: 6px;">Search clients...</div>
+              <div style="height:28px;padding:0 10px;background:#111;color:#fff;border-radius:6px;font-size:10px;font-weight:600;display:flex;align-items:center;">+ Add</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="view-row">
+    <div class="view-label">Desktop</div>
+    <div class="compare">
+      <div class="side">
+        <span class="side-label before">Before</span>
+        <div class="desktop" style="height: 80px;">
+          <div style="margin-left: 110px; padding: 10px; width: 160px;">
+            <div class="problem-zone" style="padding: 4px;"><div class="block" style="height: 26px; border-radius: 5px; font-size: 8px;">Search contacts...</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="arrow-between" style="margin-top:16px;">→</div>
+      <div class="side">
+        <span class="side-label after">After</span>
+        <div class="desktop" style="height: 80px;">
+          <div style="margin-left: 110px; padding: 10px; width: 200px;">
+            <div class="fix-zone" style="display: flex; gap: 5px; padding: 4px;">
+              <div class="block" style="flex: 1; height: 26px; border-radius: 5px; font-size: 8px;">Search clients...</div>
+              <div style="height:26px;padding:0 8px;background:#111;color:#fff;border-radius:5px;font-size:9px;font-weight:600;display:flex;align-items:center;">+ Add</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================ -->
+<!-- ISSUE #4: Auto-reply preview (BOTH) -->
+<!-- ============================================ -->
+<div class="issue">
+  <div class="issue-header">
+    <span class="issue-num">#4</span>
+    <span class="issue-title">Every client shows the same auto-reply preview</span>
+  </div>
+  <p class="issue-desc">All cards show "Thanks! Our team will get ba..." — the agent's auto-reply. Can't distinguish clients.</p>
+  <p class="affects"><span class="affects-tag affects-mobile">Mobile</span> <span class="affects-tag affects-desktop">Desktop</span></p>
+
+  <div class="view-row">
+    <div class="view-label">Mobile</div>
+    <div class="compare">
+      <div class="side">
+        <span class="side-label before">Before</span>
+        <div class="phone" style="height: 200px;">
+          <div style="padding: 10px; display: flex; flex-direction: column; gap: 6px;">
+            <div class="problem-zone" style="padding: 8px 10px;">
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:12px;font-weight:600;">SW</span><span style="font-size:9px;color:#999;">16d ago</span></div>
+              <div style="font-size:10px;color:#999;margin-top:3px;">Thanks! Our team will get ba...</div>
+            </div>
+            <div class="problem-zone" style="padding: 8px 10px;">
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:12px;font-weight:600;">Jason</span><span style="font-size:9px;color:#999;">16d ago</span></div>
+              <div style="font-size:10px;color:#999;margin-top:3px;">Thanks! Our team will get ba...</div>
+            </div>
+            <div class="problem-zone" style="padding: 8px 10px;">
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:12px;font-weight:600;">Allyson</span><span style="font-size:9px;color:#999;">18d ago</span></div>
+              <div style="font-size:10px;color:#999;margin-top:3px;">Thanks! Our team will get ba...</div>
+            </div>
+          </div>
+        </div>
+        <p class="caption">Every row identical. Useless previews.</p>
+      </div>
+      <div class="arrow-between">→</div>
+      <div class="side">
+        <span class="side-label after">After</span>
+        <div class="phone" style="height: 200px;">
+          <div style="padding: 10px; display: flex; flex-direction: column; gap: 6px;">
+            <div class="fix-zone" style="padding: 8px 10px;">
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:12px;font-weight:600;">SW</span><span style="font-size:9px;color:#999;">16d ago</span></div>
+              <div style="font-size:10px;color:#555;margin-top:3px;">Looking for curtains for my living room</div>
+            </div>
+            <div class="fix-zone" style="padding: 8px 10px;">
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:12px;font-weight:600;">Jason</span><span style="font-size:9px;color:#999;">16d ago</span></div>
+              <div style="font-size:10px;color:#555;margin-top:3px;">Can I get a quote for roller blinds?</div>
+            </div>
+            <div class="fix-zone" style="padding: 8px 10px;">
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:12px;font-weight:600;">Allyson</span><span style="font-size:9px;color:#999;">18d ago</span></div>
+              <div style="font-size:10px;color:#555;margin-top:3px;">Hi, do you do curtain installations?</div>
+            </div>
+          </div>
+        </div>
+        <p class="caption">Last <strong>inbound</strong> message shown. Each client is distinguishable.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="view-row">
+    <div class="view-label">Desktop</div>
+    <div class="compare">
+      <div class="side">
+        <span class="side-label before">Before</span>
+        <div class="desktop" style="height: 180px;">
+          <div style="margin-left: 110px; width: 160px; padding: 8px; display: flex; flex-direction: column; gap: 4px; border-right: 1px solid #e5e5e5; height: 100%;">
+            <div class="problem-zone" style="padding: 6px;">
+              <div style="font-size:10px;font-weight:600;">SW</div>
+              <div style="font-size:8px;color:#999;margin-top:2px;">Thanks! Our team will get ba...</div>
+            </div>
+            <div class="problem-zone" style="padding: 6px;">
+              <div style="font-size:10px;font-weight:600;">Jason</div>
+              <div style="font-size:8px;color:#999;margin-top:2px;">Thanks! Our team will get ba...</div>
+            </div>
+            <div class="problem-zone" style="padding: 6px;">
+              <div style="font-size:10px;font-weight:600;">Allyson</div>
+              <div style="font-size:8px;color:#999;margin-top:2px;">Thanks! Our team will get ba...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="arrow-between">→</div>
+      <div class="side">
+        <span class="side-label after">After</span>
+        <div class="desktop" style="height: 180px;">
+          <div style="margin-left: 110px; width: 160px; padding: 8px; display: flex; flex-direction: column; gap: 4px; border-right: 1px solid #e5e5e5; height: 100%;">
+            <div class="fix-zone" style="padding: 6px;">
+              <div style="font-size:10px;font-weight:600;">SW</div>
+              <div style="font-size:8px;color:#555;margin-top:2px;">Looking for curtains for living room</div>
+            </div>
+            <div class="fix-zone" style="padding: 6px;">
+              <div style="font-size:10px;font-weight:600;">Jason</div>
+              <div style="font-size:8px;color:#555;margin-top:2px;">Can I get a quote for roller blinds?</div>
+            </div>
+            <div class="fix-zone" style="padding: 6px;">
+              <div style="font-size:10px;font-weight:600;">Allyson</div>
+              <div style="font-size:8px;color:#555;margin-top:2px;">Hi, do you do curtain installations?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================ -->
+<!-- ISSUE #5: Status dots (BOTH) -->
+<!-- ============================================ -->
+<div class="issue">
+  <div class="issue-header">
+    <span class="issue-num">#5</span>
+    <span class="issue-title">Yellow dots convey no information</span>
+  </div>
+  <p class="issue-desc">Every client has the same yellow dot with no legend. Can't tell new leads from engaged clients.</p>
+  <p class="affects"><span class="affects-tag affects-mobile">Mobile</span> <span class="affects-tag affects-desktop">Desktop</span></p>
+
+  <div class="view-row">
+    <div class="view-label">Mobile</div>
+    <div class="compare">
+      <div class="side">
+        <span class="side-label before">Before</span>
+        <div class="phone" style="height: 100px;">
+          <div style="padding: 10px; display: flex; flex-direction: column; gap: 8px;">
+            <div class="problem-zone" style="display:flex;align-items:center;gap:8px;padding:8px;"><span class="status-dot"></span><span style="font-size:12px;font-weight:600;">SW</span></div>
+            <div class="problem-zone" style="display:flex;align-items:center;gap:8px;padding:8px;"><span class="status-dot"></span><span style="font-size:12px;font-weight:600;">Allyson</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="arrow-between" style="margin-top:20px;">→</div>
+      <div class="side">
+        <span class="side-label after">After</span>
+        <div class="phone" style="height: 100px;">
+          <div style="padding: 10px; display: flex; flex-direction: column; gap: 8px;">
+            <div class="fix-zone" style="display:flex;align-items:center;gap:8px;padding:8px;"><span style="font-size:12px;font-weight:600;">SW</span><span class="status-badge badge-engaged">Engaged</span></div>
+            <div class="fix-zone" style="display:flex;align-items:center;gap:8px;padding:8px;"><span style="font-size:12px;font-weight:600;">Allyson</span><span class="status-badge badge-new">New</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="view-row">
+    <div class="view-label">Desktop</div>
+    <div class="compare">
+      <div class="side">
+        <span class="side-label before">Before</span>
+        <div class="desktop" style="height: 100px;">
+          <div style="margin-left: 110px; width: 160px; padding: 8px; display: flex; flex-direction: column; gap: 4px;">
+            <div class="problem-zone" style="display:flex;align-items:center;gap:6px;padding:6px;"><span class="status-dot"></span><span style="font-size:10px;font-weight:600;">SW</span><span class="ch-badge ch-tg">TG</span></div>
+            <div class="problem-zone" style="display:flex;align-items:center;gap:6px;padding:6px;"><span class="status-dot"></span><span style="font-size:10px;font-weight:600;">Allyson</span><span class="ch-badge ch-tg">TG</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="arrow-between" style="margin-top:20px;">→</div>
+      <div class="side">
+        <span class="side-label after">After</span>
+        <div class="desktop" style="height: 100px;">
+          <div style="margin-left: 110px; width: 180px; padding: 8px; display: flex; flex-direction: column; gap: 4px;">
+            <div class="fix-zone" style="display:flex;align-items:center;gap:6px;padding:6px;"><span style="font-size:10px;font-weight:600;">SW</span><span class="ch-badge ch-tg">TG</span><span class="status-badge badge-engaged">Engaged</span></div>
+            <div class="fix-zone" style="display:flex;align-items:center;gap:6px;padding:6px;"><span style="font-size:10px;font-weight:600;">Allyson</span><span class="ch-badge ch-tg">TG</span><span class="status-badge badge-new">New</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================ -->
+<!-- ISSUE #6: Empty right panel (DESKTOP ONLY) -->
+<!-- ============================================ -->
+<div class="issue">
+  <div class="issue-header">
+    <span class="issue-num">#6</span>
+    <span class="issue-title">Empty right panel wastes 70% of the screen</span>
+  </div>
+  <p class="issue-desc">When no client is selected, the right panel just says "Select a client to view details." — wasted space.</p>
+  <p class="affects"><span class="affects-tag affects-desktop">Desktop only</span></p>
+
+  <div class="view-row">
+    <div class="view-label">Desktop</div>
+    <div class="compare">
+      <div class="side">
+        <span class="side-label before">Before</span>
+        <div class="desktop" style="height: 220px;">
+          <div class="mini-sidebar"><div class="sb-brand">Drapeworks</div><div class="sb-item active">Clients</div></div>
+          <div style="margin-left: 110px; display: flex; height: 100%;">
+            <div style="width: 120px; border-right: 1px solid #e5e5e5; padding: 6px;">
+              <div class="block solid" style="height: 28px; margin-bottom: 3px; font-size: 8px;">SW</div>
+              <div class="block solid" style="height: 28px; margin-bottom: 3px; font-size: 8px;">Jason</div>
+            </div>
+            <div class="problem-zone" style="flex: 1; display: flex; align-items: center; justify-content: center; margin: 6px;">
+              <span style="font-size: 10px; color: #ccc;">Select a client to view details.</span>
+            </div>
+          </div>
+        </div>
+        <p class="caption">Giant empty space with one grey sentence.</p>
+      </div>
+      <div class="arrow-between">→</div>
+      <div class="side">
+        <span class="side-label after">After</span>
+        <div class="desktop" style="height: 220px;">
+          <div class="mini-sidebar"><div class="sb-brand">Drapeworks</div><div class="sb-item active">Clients</div></div>
+          <div style="margin-left: 110px; display: flex; height: 100%;">
+            <div style="width: 120px; border-right: 1px solid #e5e5e5; padding: 6px;">
+              <div class="block solid" style="height: 28px; margin-bottom: 3px; font-size: 8px;">SW</div>
+              <div class="block solid" style="height: 28px; margin-bottom: 3px; font-size: 8px;">Jason</div>
+            </div>
+            <div class="fix-zone" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; margin: 6px;">
+              <div style="display: flex; gap: 14px;">
+                <div style="text-align: center;"><div style="font-size: 16px; font-weight: 700;">4</div><div style="font-size: 8px; color: #999;">Clients</div></div>
+                <div style="width: 1px; background: #eee;"></div>
+                <div style="text-align: center;"><div style="font-size: 16px; font-weight: 700;">2</div><div style="font-size: 8px; color: #999;">Engaged</div></div>
+                <div style="width: 1px; background: #eee;"></div>
+                <div style="text-align: center;"><div style="font-size: 16px; font-weight: 700;">$480</div><div style="font-size: 8px; color: #999;">Pipeline</div></div>
+              </div>
+              <div style="font-size: 10px; color: #999;">Select a client or add a new one</div>
+              <div style="padding: 4px 12px; background: #111; color: #fff; border-radius: 5px; font-size: 9px; font-weight: 600;">+ Add Client</div>
+            </div>
+          </div>
+        </div>
+        <p class="caption">Quick stats + CTA. Empty state is now useful.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================ -->
+<!-- ISSUE #7: Calendar too large (BOTH) -->
+<!-- ============================================ -->
+<div class="issue">
+  <div class="issue-header">
+    <span class="issue-num">#7</span>
+    <span class="issue-title">Full calendar takes too much vertical space</span>
+  </div>
+  <p class="issue-desc">Monthly calendar grid dominates the dashboard while showing very little (just a few dots).</p>
+  <p class="affects"><span class="affects-tag affects-mobile">Mobile</span> <span class="affects-tag affects-desktop">Desktop</span></p>
+
+  <div class="view-row">
+    <div class="view-label">Mobile</div>
+    <div class="compare">
+      <div class="side">
+        <span class="side-label before">Before</span>
+        <div class="phone" style="height: 200px;">
+          <div style="padding: 10px;">
+            <div class="problem-zone" style="padding: 8px;">
+              <div style="font-size:10px;font-weight:600;margin-bottom:4px;">Activity Calendar</div>
+              <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:7px;color:#999;text-align:center;">
+                <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+                <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div>
+                <div>8</div><div>9</div><div>10</div><div>11</div><div>12</div><div>13</div><div>14</div>
+                <div>15</div><div>16</div><div>17</div><div>18</div><div>19</div><div>20</div><div style="font-weight:600;border:1px solid #ccc;border-radius:2px;">21</div>
+                <div>22</div><div>23</div><div>24</div><div>25</div><div>26</div><div>27</div><div>28</div>
+                <div>29</div><div>30</div><div>31</div><div></div><div></div><div></div><div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="caption">Full month grid. ~40% of visible area for near-zero info.</p>
+      </div>
+      <div class="arrow-between">→</div>
+      <div class="side">
+        <span class="side-label after">After</span>
+        <div class="phone" style="height: 200px;">
+          <div style="padding: 10px;">
+            <div class="fix-zone" style="padding: 8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:10px;font-weight:600;">This Week</span><span style="font-size:8px;color:#999;">Mar 17 – 23</span></div>
+              <div style="display:flex;gap:3px;">
+                <div style="flex:1;text-align:center;font-size:8px;color:#999;padding:5px 0;border-radius:3px;">Mon</div>
+                <div style="flex:1;text-align:center;font-size:8px;color:#999;padding:5px 0;border-radius:3px;">Tue</div>
+                <div style="flex:1;text-align:center;font-size:8px;color:#999;padding:5px 0;border-radius:3px;background:#e8f0fe;">Wed<br><span style="font-size:6px;">2</span></div>
+                <div style="flex:1;text-align:center;font-size:8px;color:#999;padding:5px 0;border-radius:3px;">Thu</div>
+                <div style="flex:1;text-align:center;font-size:8px;font-weight:600;color:#111;padding:5px 0;border-radius:3px;border:1px solid #ccc;">Fri</div>
+                <div style="flex:1;text-align:center;font-size:8px;color:#999;padding:5px 0;border-radius:3px;">Sat</div>
+                <div style="flex:1;text-align:center;font-size:8px;color:#999;padding:5px 0;border-radius:3px;">Sun</div>
+              </div>
+              <div style="text-align:right;margin-top:4px;"><span style="font-size:8px;color:#666;text-decoration:underline;">Full calendar →</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="caption">Compact weekly strip. Expand link for full view.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="view-row">
+    <div class="view-label">Desktop</div>
+    <div class="compare">
+      <div class="side">
+        <span class="side-label before">Before</span>
+        <div class="desktop" style="height: 160px;">
+          <div style="margin-left: 110px; padding: 10px;">
+            <div class="problem-zone" style="padding: 8px;">
+              <div style="font-size:10px;font-weight:600;margin-bottom:4px;">Activity Calendar</div>
+              <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:7px;color:#999;text-align:center;">
+                <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+                <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div>
+                <div>8</div><div>9</div><div>10</div><div>11</div><div>12</div><div>13</div><div>14</div>
+                <div>15</div><div>16</div><div>17</div><div>18</div><div>19</div><div>20</div><div style="font-weight:600;border:1px solid #ccc;border-radius:2px;">21</div>
+                <div>22</div><div>23</div><div>24</div><div>25</div><div>26</div><div>27</div><div>28</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="arrow-between">→</div>
+      <div class="side">
+        <span class="side-label after">After</span>
+        <div class="desktop" style="height: 160px;">
+          <div style="margin-left: 110px; padding: 10px;">
+            <div class="fix-zone" style="padding: 8px; display: flex; align-items: center; gap: 12px;">
+              <span style="font-size:10px;font-weight:600;white-space:nowrap;">This Week</span>
+              <div style="display:flex;gap:4px;flex:1;">
+                <div style="flex:1;text-align:center;font-size:8px;color:#999;padding:4px 0;border-radius:3px;">Mon</div>
+                <div style="flex:1;text-align:center;font-size:8px;color:#999;padding:4px 0;border-radius:3px;">Tue</div>
+                <div style="flex:1;text-align:center;font-size:8px;color:#999;padding:4px 0;border-radius:3px;background:#e8f0fe;">Wed · 2</div>
+                <div style="flex:1;text-align:center;font-size:8px;color:#999;padding:4px 0;border-radius:3px;">Thu</div>
+                <div style="flex:1;text-align:center;font-size:8px;font-weight:600;color:#111;padding:4px 0;border-radius:3px;border:1px solid #ccc;">Fri</div>
+                <div style="flex:1;text-align:center;font-size:8px;color:#999;padding:4px 0;border-radius:3px;">Sat</div>
+                <div style="flex:1;text-align:center;font-size:8px;color:#999;padding:4px 0;border-radius:3px;">Sun</div>
+              </div>
+              <span style="font-size:8px;color:#666;text-decoration:underline;white-space:nowrap;">Full calendar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================ -->
+<!-- ISSUE #8: Search says "contacts" (BOTH) -->
+<!-- ============================================ -->
+<div class="issue">
+  <div class="issue-header">
+    <span class="issue-num">#8</span>
+    <span class="issue-title">Search placeholder still says "contacts"</span>
+  </div>
+  <p class="issue-desc">Nav says "Clients" but search says "Search contacts..." — inconsistent terminology.</p>
+  <p class="affects"><span class="affects-tag affects-mobile">Mobile</span> <span class="affects-tag affects-desktop">Desktop</span></p>
+
+  <div class="view-row">
+    <div class="view-label">Mobile</div>
+    <div class="compare">
+      <div class="side">
+        <span class="side-label before">Before</span>
+        <div class="phone" style="height: 60px;">
+          <div style="padding: 10px;"><div class="problem-zone" style="padding:5px;"><div class="block" style="height:26px;border-radius:5px;">Search contacts...</div></div></div>
+        </div>
+      </div>
+      <div class="arrow-between" style="margin-top:10px;">→</div>
+      <div class="side">
+        <span class="side-label after">After</span>
+        <div class="phone" style="height: 60px;">
+          <div style="padding: 10px;"><div class="fix-zone" style="padding:5px;"><div class="block" style="height:26px;border-radius:5px;">Search clients...</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="view-row">
+    <div class="view-label">Desktop</div>
+    <div class="compare">
+      <div class="side">
+        <span class="side-label before">Before</span>
+        <div class="desktop" style="height: 60px;">
+          <div style="margin-left:110px;padding:10px;width:160px;"><div class="problem-zone" style="padding:4px;"><div class="block" style="height:24px;border-radius:5px;font-size:8px;">Search contacts...</div></div></div>
+        </div>
+      </div>
+      <div class="arrow-between" style="margin-top:10px;">→</div>
+      <div class="side">
+        <span class="side-label after">After</span>
+        <div class="desktop" style="height: 60px;">
+          <div style="margin-left:110px;padding:10px;width:160px;"><div class="fix-zone" style="padding:4px;"><div class="block" style="height:24px;border-radius:5px;font-size:8px;">Search clients...</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================ -->
+<!-- ISSUE #9: Agent Off label (BOTH) -->
+<!-- ============================================ -->
+<div class="issue">
+  <div class="issue-header">
+    <span class="issue-num">#9</span>
+    <span class="issue-title">"Agent Off" toggle label is ambiguous</span>
+  </div>
+  <p class="issue-desc">Does "Agent Off" mean "click to turn off" or "the agent is currently off"? Confusing label.</p>
+  <p class="affects"><span class="affects-tag affects-mobile">Mobile</span> <span class="affects-tag affects-desktop">Desktop</span></p>
+
+  <div class="view-row">
+    <div class="view-label">Mobile</div>
+    <div class="compare">
+      <div class="side">
+        <span class="side-label before">Before</span>
+        <div class="phone" style="height: 56px;">
+          <div style="padding:14px;display:flex;justify-content:center;">
+            <div class="problem-zone" style="display:flex;align-items:center;gap:6px;padding:5px 8px;">
+              <span style="font-size:10px;color:#999;">Agent Off</span>
+              <div style="width:30px;height:16px;background:#ddd;border-radius:8px;position:relative;"><div style="width:12px;height:12px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="arrow-between" style="margin-top:8px;">→</div>
+      <div class="side">
+        <span class="side-label after">After</span>
+        <div class="phone" style="height: 56px;">
+          <div style="padding:14px;display:flex;justify-content:center;">
+            <div class="fix-zone" style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:#f5f5f5;border-radius:12px;">
+              <span style="font-size:10px;color:#666;font-weight:500;">AI Agent</span>
+              <div style="width:30px;height:16px;background:#ddd;border-radius:8px;position:relative;"><div style="width:12px;height:12px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="view-row">
+    <div class="view-label">Desktop</div>
+    <div class="compare">
+      <div class="side">
+        <span class="side-label before">Before</span>
+        <div class="desktop" style="height: 56px;">
+          <div style="margin-left:110px;padding:14px;display:flex;justify-content:center;">
+            <div class="problem-zone" style="display:flex;align-items:center;gap:6px;padding:5px 8px;">
+              <span style="font-size:10px;color:#999;">Agent Off</span>
+              <div style="width:30px;height:16px;background:#ddd;border-radius:8px;position:relative;"><div style="width:12px;height:12px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="arrow-between" style="margin-top:8px;">→</div>
+      <div class="side">
+        <span class="side-label after">After</span>
+        <div class="desktop" style="height: 56px;">
+          <div style="margin-left:110px;padding:14px;display:flex;justify-content:center;">
+            <div class="fix-zone" style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:#f5f5f5;border-radius:12px;">
+              <span style="font-size:10px;color:#666;font-weight:500;">AI Agent</span>
+              <div style="width:30px;height:16px;background:#ddd;border-radius:8px;position:relative;"><div style="width:12px;height:12px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================ -->
+<!-- ISSUE #10: No page title on mobile (MOBILE ONLY) -->
+<!-- ============================================ -->
+<div class="issue">
+  <div class="issue-header">
+    <span class="issue-num">#10</span>
+    <span class="issue-title">Mobile header shows no page title</span>
+  </div>
+  <p class="issue-desc">Top bar just says "Drapeworks". User doesn't know which page they're on without looking at the content.</p>
+  <p class="affects"><span class="affects-tag affects-mobile">Mobile only</span></p>
+
+  <div class="view-row">
+    <div class="view-label">Mobile</div>
+    <div class="compare">
+      <div class="side">
+        <span class="side-label before">Before</span>
+        <div class="phone" style="height: 56px;">
+          <div class="problem-zone" style="margin:4px;">
+            <div class="topbar"><div class="hamburger"><span></span><span></span><span></span></div><div class="brand">Drapeworks</div></div>
+          </div>
+        </div>
+        <p class="caption">Dashboard? Clients? Settings? No way to tell.</p>
+      </div>
+      <div class="arrow-between" style="margin-top:8px;">→</div>
+      <div class="side">
+        <span class="side-label after">After</span>
+        <div class="phone" style="height: 56px;">
+          <div class="fix-zone" style="margin:4px;">
+            <div class="topbar"><div class="hamburger"><span></span><span></span><span></span></div><div class="brand">Drapeworks</div><div style="margin-left:auto;font-size:10px;font-weight:600;color:#666;">Clients</div></div>
+          </div>
+        </div>
+        <p class="caption">Page title right-aligned. Always know where you are.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -14,6 +14,13 @@ export interface Database {
   invoices: InvoicesTable;
   receipts: ReceiptsTable;
   document_sequences: DocumentSequencesTable;
+  product_categories: ProductCategoriesTable;
+  products: ProductsTable;
+  product_variants: ProductVariantsTable;
+  order_stages: OrderStagesTable;
+  orders: OrdersTable;
+  order_items: OrderItemsTable;
+  order_stage_history: OrderStageHistoryTable;
 }
 
 export interface ContactsTable {
@@ -128,6 +135,7 @@ export interface NotesTable {
   user_id: string;
   content: string;
   author: Generated<'human' | 'agent'>;
+  image_urls: Generated<string[]>;
   created_at: Generated<string>;
 }
 
@@ -192,4 +200,94 @@ export interface DocumentSequencesTable {
   user_id: string;
   type: string;
   last_number: Generated<number>;
+}
+
+export interface ProductCategoriesTable {
+  id: Generated<string>;
+  user_id: string;
+  name: string;
+  sort_order: Generated<number>;
+  created_at: Generated<string>;
+}
+
+export interface ProductsTable {
+  id: Generated<string>;
+  user_id: string;
+  name: string;
+  description: string | null;
+  category_id: string | null;
+  sell_price: number | null;
+  cost_price: number | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+export interface ProductVariantsTable {
+  id: Generated<string>;
+  product_id: string;
+  user_id: string;
+  name: string;
+  attributes: Generated<Record<string, any>>;
+  sell_price: number | null;
+  cost_price: number | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+export interface OrderStagesTable {
+  id: Generated<string>;
+  user_id: string;
+  name: string;
+  sort_order: Generated<number>;
+  color: Generated<string>;
+  created_at: Generated<string>;
+}
+
+export interface OrdersTable {
+  id: Generated<string>;
+  deal_id: string;
+  contact_id: string;
+  user_id: string;
+  order_number: string;
+  title: string;
+  stage: string;
+  total_amount: Generated<number>;
+  notes: string | null;
+  delivery_address: string | null;
+  delivery_date: string | null;
+  delivery_notes: string | null;
+  assigned_to: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+export interface OrderItemsTable {
+  id: Generated<string>;
+  order_id: string;
+  product_id: string | null;
+  product_variant_id: string | null;
+  name: string;
+  qty: Generated<number>;
+  unit_price: Generated<number>;
+  width_cm: number | null;
+  drop_cm: number | null;
+  room_name: string | null;
+  window_position: string | null;
+  fixing_type: string | null;
+  stack_direction: string | null;
+  lining_type: string | null;
+  motorization: string | null;
+  notes: string | null;
+  sort_order: Generated<number>;
+  created_at: Generated<string>;
+}
+
+export interface OrderStageHistoryTable {
+  id: Generated<string>;
+  order_id: string;
+  from_stage: string | null;
+  to_stage: string;
+  changed_by: string | null;
+  notes: string | null;
+  created_at: Generated<string>;
 }

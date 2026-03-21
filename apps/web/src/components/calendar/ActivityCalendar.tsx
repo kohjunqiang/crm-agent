@@ -3,10 +3,11 @@
 import { useState, useMemo } from 'react';
 import type { Activity, Contact } from '@agent-crm/shared';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChevronLeft, ChevronRight, Bot, User } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Bot, User, CalendarDays, ChevronDown } from 'lucide-react';
 import { formatEventType } from '@/lib/format';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const SHORT_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const EVENT_COLORS: Record<string, string> = {
   created: 'bg-emerald-400',
@@ -36,14 +37,12 @@ function getCalendarGrid(year: number, month: number): (Date | null)[] {
   const firstDayOfWeek = days[0].getDay();
   const grid: (Date | null)[] = [];
 
-  // Leading blanks
   for (let i = 0; i < firstDayOfWeek; i++) {
     grid.push(null);
   }
   for (const d of days) {
     grid.push(d);
   }
-  // Trailing blanks to fill last row
   while (grid.length % 7 !== 0) {
     grid.push(null);
   }
@@ -54,6 +53,27 @@ function dateKey(date: Date): string {
   return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 }
 
+function getCurrentWeek(): Date[] {
+  const today = new Date();
+  const day = today.getDay(); // 0 = Sun
+  const startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - day);
+  const week: Date[] = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(startOfWeek);
+    d.setDate(startOfWeek.getDate() + i);
+    week.push(d);
+  }
+  return week;
+}
+
+function formatWeekRange(week: Date[]): string {
+  const first = week[0];
+  const last = week[6];
+  const opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
+  return `${first.toLocaleDateString('en-US', opts)} – ${last.toLocaleDateString('en-US', opts)}`;
+}
+
 export function ActivityCalendar({
   activities,
   contacts,
@@ -61,6 +81,7 @@ export function ActivityCalendar({
   activities: Activity[];
   contacts: Contact[];
 }) {
+  const [expanded, setExpanded] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(() => {
     const now = new Date();
     return { year: now.getFullYear(), month: now.getMonth() };
@@ -85,9 +106,115 @@ export function ActivityCalendar({
     return map;
   }, [contacts]);
 
-  const grid = getCalendarGrid(currentMonth.year, currentMonth.month);
   const today = new Date();
   const todayKey = dateKey(today);
+  const currentWeek = getCurrentWeek();
+
+  const selectedActivities = selectedDate ? activityMap.get(selectedDate) ?? [] : [];
+
+  // Detail section for selected day
+  const detailSection = selectedDate && selectedActivities.length > 0 && (
+    <div className="mt-3 rounded-md border p-3">
+      <p className="mb-2 text-xs font-medium text-muted-foreground">
+        {selectedActivities.length} activit{selectedActivities.length === 1 ? 'y' : 'ies'}
+      </p>
+      <div className="flex flex-col gap-1.5">
+        {selectedActivities.map((a) => {
+          const contact = a.contact_id ? contactMap.get(a.contact_id) : null;
+          const contactName = contact
+            ? contact.name || contact.phone || 'Unknown'
+            : null;
+          return (
+            <div key={a.id} className="flex items-center gap-2 text-xs">
+              <span
+                className={`h-2 w-2 shrink-0 rounded-full ${getEventColor(a.event_type)}`}
+              />
+              <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-muted">
+                {a.actor === 'agent' ? (
+                  <Bot className="h-2.5 w-2.5 text-violet-600" />
+                ) : (
+                  <User className="h-2.5 w-2.5 text-muted-foreground" />
+                )}
+              </div>
+              <span className="font-medium">
+                {formatEventType(a.event_type)}
+              </span>
+              {contactName && (
+                <span className="text-muted-foreground">
+                  {contactName}
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
+  // Compact weekly strip (default)
+  if (!expanded) {
+    return (
+      <Card className="gap-0 py-0 shadow-none">
+        <CardHeader className="flex flex-row items-center justify-between px-5 pb-2 pt-4">
+          <CardTitle className="flex items-center gap-2 text-sm font-semibold">
+            <CalendarDays className="h-4 w-4 text-muted-foreground" />
+            This Week
+          </CardTitle>
+          <span className="text-xs text-muted-foreground">
+            {formatWeekRange(currentWeek)}
+          </span>
+        </CardHeader>
+        <CardContent className="px-5 pb-4">
+          <div className="grid grid-cols-7 gap-1.5">
+            {currentWeek.map((date) => {
+              const key = dateKey(date);
+              const dayActivities = activityMap.get(key) ?? [];
+              const isToday = key === todayKey;
+              const isSelected = key === selectedDate;
+              const hasActivities = dayActivities.length > 0;
+
+              return (
+                <button
+                  key={key}
+                  onClick={() => setSelectedDate(isSelected ? null : key)}
+                  className={`flex flex-col items-center gap-0.5 rounded-lg px-1 py-2 text-center transition-colors ${
+                    isSelected ? 'bg-accent' : hasActivities ? 'bg-blue-50 hover:bg-blue-100' : 'hover:bg-accent'
+                  } ${isToday ? 'ring-1 ring-primary' : ''}`}
+                >
+                  <span className={`text-[10px] ${isToday ? 'font-bold text-primary' : 'text-muted-foreground'}`}>
+                    {SHORT_DAYS[date.getDay()]}
+                  </span>
+                  <span className={`text-xs ${isToday ? 'font-semibold' : ''}`}>
+                    {date.getDate()}
+                  </span>
+                  {hasActivities && (
+                    <span className="text-[9px] font-medium text-blue-600">
+                      {dayActivities.length}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {detailSection}
+
+          <div className="mt-2 flex justify-end">
+            <button
+              onClick={() => setExpanded(true)}
+              className="flex items-center gap-1 text-xs text-muted-foreground underline hover:text-foreground"
+            >
+              Full calendar
+              <ChevronDown className="h-3 w-3" />
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Expanded full monthly calendar
+  const grid = getCalendarGrid(currentMonth.year, currentMonth.month);
   const monthLabel = new Date(currentMonth.year, currentMonth.month).toLocaleDateString('en-US', {
     month: 'long',
     year: 'numeric',
@@ -109,13 +236,17 @@ export function ActivityCalendar({
     setSelectedDate(null);
   }
 
-  const selectedActivities = selectedDate ? activityMap.get(selectedDate) ?? [] : [];
-
   return (
     <Card className="gap-0 py-0 shadow-none">
       <CardHeader className="flex flex-row items-center justify-between px-5 pb-2 pt-4">
         <CardTitle className="text-sm font-semibold">Activity Calendar</CardTitle>
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => { setExpanded(false); setSelectedDate(null); }}
+            className="text-xs text-muted-foreground underline hover:text-foreground"
+          >
+            Collapse
+          </button>
           <button
             onClick={prevMonth}
             className="rounded-md p-2 hover:bg-accent"
@@ -195,44 +326,7 @@ export function ActivityCalendar({
           })}
         </div>
 
-        {/* Selected day detail */}
-        {selectedDate && selectedActivities.length > 0 && (
-          <div className="mt-3 rounded-md border p-3">
-            <p className="mb-2 text-xs font-medium text-muted-foreground">
-              {selectedActivities.length} activit{selectedActivities.length === 1 ? 'y' : 'ies'}
-            </p>
-            <div className="flex flex-col gap-1.5">
-              {selectedActivities.map((a) => {
-                const contact = a.contact_id ? contactMap.get(a.contact_id) : null;
-                const contactName = contact
-                  ? contact.name || contact.phone || 'Unknown'
-                  : null;
-                return (
-                  <div key={a.id} className="flex items-center gap-2 text-xs">
-                    <span
-                      className={`h-2 w-2 shrink-0 rounded-full ${getEventColor(a.event_type)}`}
-                    />
-                    <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-muted">
-                      {a.actor === 'agent' ? (
-                        <Bot className="h-2.5 w-2.5 text-violet-600" />
-                      ) : (
-                        <User className="h-2.5 w-2.5 text-muted-foreground" />
-                      )}
-                    </div>
-                    <span className="font-medium">
-                      {formatEventType(a.event_type)}
-                    </span>
-                    {contactName && (
-                      <span className="text-muted-foreground">
-                        {contactName}
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
+        {detailSection}
       </CardContent>
     </Card>
   );

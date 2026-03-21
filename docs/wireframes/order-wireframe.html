@@ -1,0 +1,2526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drapeworks OMS — Wireframe</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: oklch(0.98 0.003 90);
+    --card: oklch(1 0 0);
+    --text: oklch(0.17 0.005 285);
+    --text-muted: oklch(0.55 0.01 270);
+    --text-faint: oklch(0.7 0.005 270);
+    --border: oklch(0.92 0.004 90);
+    --border-light: oklch(0.95 0.003 90);
+    --accent: oklch(0.965 0.003 90);
+    --sidebar-bg: oklch(1 0 0);
+    --sidebar-active: oklch(0.965 0.003 90);
+    --radius: 0.625rem;
+    --radius-lg: 0.875rem;
+
+    /* Stage colors */
+    --stage-ordered-bg: #fef7ed;
+    --stage-ordered-text: #9a6b20;
+    --stage-ordered-border: #f5c842;
+    --stage-production-bg: #eff6ff;
+    --stage-production-text: #2563a0;
+    --stage-production-border: #60a5fa;
+    --stage-ready-bg: #ecfdf5;
+    --stage-ready-text: #166534;
+    --stage-ready-border: #4ade80;
+    --stage-delivered-bg: #f5f3ff;
+    --stage-delivered-text: #5b21b6;
+    --stage-delivered-border: #a78bfa;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ===== LAYOUT ===== */
+  .layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: 240px;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border);
+    padding: 20px 12px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 40;
+  }
+
+  .sidebar-brand {
+    padding: 0 12px;
+    margin-bottom: 4px;
+  }
+  .sidebar-brand h1 {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .sidebar-brand span {
+    font-size: 11px;
+    color: var(--text-faint);
+  }
+
+  .sidebar-nav {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .sidebar-item:hover {
+    background: var(--accent);
+    color: var(--text);
+  }
+  .sidebar-item.active {
+    background: var(--sidebar-active);
+    color: var(--text);
+    font-weight: 500;
+  }
+  .sidebar-item svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  .sidebar-badge {
+    margin-left: auto;
+    background: var(--stage-ordered-bg);
+    color: var(--stage-ordered-text);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 7px;
+    border-radius: 10px;
+  }
+
+  .sidebar-user {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .sidebar-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--text);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .sidebar-user-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .sidebar-user-name {
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sidebar-user-email {
+    font-size: 11px;
+    color: var(--text-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ===== MAIN ===== */
+  .main {
+    flex: 1;
+    margin-left: 240px;
+    padding: 28px 32px;
+    max-width: 1200px;
+  }
+
+  .page-header {
+    margin-bottom: 24px;
+  }
+  .page-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .page-header p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* ===== KPI CARDS ===== */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .kpi-card:hover {
+    border-color: oklch(0.85 0.01 90);
+  }
+  .kpi-card.active {
+    border-color: var(--text);
+    box-shadow: 0 0 0 1px var(--text);
+  }
+
+  .kpi-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .kpi-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+  }
+  .kpi-value {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  .kpi-sub {
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-top: 4px;
+  }
+
+  /* ===== FILTERS BAR ===== */
+  .filters-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+  .search-input {
+    flex: 1;
+    max-width: 280px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 7px 12px 7px 34px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text);
+    outline: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 10px center;
+  }
+  .search-input:focus {
+    border-color: oklch(0.7 0.01 90);
+  }
+  .filter-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 7px 14px;
+    font-size: 12px;
+    font-family: inherit;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .filter-btn:hover {
+    border-color: oklch(0.8 0.01 90);
+    color: var(--text);
+  }
+
+  /* ===== STAGE GROUPS ===== */
+  .stage-group {
+    margin-bottom: 16px;
+  }
+
+  .stage-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid transparent;
+  }
+  .stage-header .stage-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .stage-header .stage-count {
+    font-weight: 400;
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+  .stage-header .stage-chevron {
+    transition: transform 0.2s;
+    color: var(--text-faint);
+  }
+  .stage-header .stage-chevron.collapsed {
+    transform: rotate(-90deg);
+  }
+  .stage-header .stage-amount {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  .stage-header.ordered { background: var(--stage-ordered-bg); border-color: oklch(0.92 0.04 80); }
+  .stage-header.production { background: var(--stage-production-bg); border-color: oklch(0.92 0.04 240); }
+  .stage-header.ready { background: var(--stage-ready-bg); border-color: oklch(0.92 0.04 150); }
+  .stage-header.delivered { background: var(--stage-delivered-bg); border-color: oklch(0.92 0.04 290); }
+
+  .stage-body {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    overflow: hidden;
+  }
+
+  /* ===== ORDER ROW ===== */
+  .order-row {
+    display: grid;
+    grid-template-columns: 2.5fr 1.2fr 1fr 1fr 0.6fr;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-light);
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .order-row:last-child {
+    border-bottom: none;
+  }
+  .order-row:hover {
+    background: oklch(0.985 0.002 90);
+  }
+
+  .order-title {
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .order-meta {
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-top: 2px;
+  }
+  .order-client {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .order-client-avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: oklch(0.85 0.03 80);
+    color: oklch(0.4 0.03 80);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .order-amount {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .order-date {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .order-date.urgent {
+    color: #d97706;
+    font-weight: 500;
+  }
+  .order-arrow {
+    color: var(--text-faint);
+    text-align: right;
+    font-size: 16px;
+  }
+
+  .payment-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-top: 4px;
+  }
+  .payment-badge.partial { background: #fff7ed; color: #c2410c; }
+  .payment-badge.paid { background: #ecfdf5; color: #166534; }
+  .payment-badge.unpaid { background: #fef2f2; color: #991b1b; }
+
+  /* ===== ORDER DETAIL (EXPANDED) ===== */
+  .order-detail {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .detail-back {
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 18px;
+  }
+  .detail-title h3 {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .detail-title span {
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+  .detail-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .btn {
+    padding: 7px 16px;
+    border-radius: var(--radius);
+    font-size: 12px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    transition: all 0.15s;
+  }
+  .btn:hover {
+    background: var(--accent);
+  }
+  .btn-primary {
+    background: var(--text);
+    color: white;
+    border-color: var(--text);
+  }
+  .btn-primary:hover {
+    opacity: 0.9;
+  }
+
+  .detail-body {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    min-height: 400px;
+  }
+
+  .detail-main {
+    padding: 20px;
+    border-right: 1px solid var(--border);
+  }
+
+  .detail-sidebar {
+    padding: 20px;
+  }
+
+  /* ===== STAGE TIMELINE ===== */
+  .timeline {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    margin-bottom: 28px;
+    position: relative;
+  }
+
+  .timeline-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+  }
+
+  .timeline-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--card);
+    margin: 0 auto 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    position: relative;
+    z-index: 2;
+    transition: all 0.2s;
+  }
+  .timeline-step.completed .timeline-dot {
+    background: var(--text);
+    border-color: var(--text);
+    color: white;
+  }
+  .timeline-step.current .timeline-dot {
+    border-color: var(--stage-production-border);
+    background: var(--stage-production-bg);
+    color: var(--stage-production-text);
+    box-shadow: 0 0 0 3px oklch(0.92 0.04 240);
+  }
+
+  .timeline-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 13px;
+    left: calc(50% + 18px);
+    right: calc(-50% + 18px);
+    height: 2px;
+    background: var(--border);
+    z-index: 1;
+  }
+  .timeline-step.completed:not(:last-child)::after {
+    background: var(--text);
+  }
+
+  .timeline-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+  .timeline-step.current .timeline-label {
+    color: var(--stage-production-text);
+    font-weight: 600;
+  }
+  .timeline-step.completed .timeline-label {
+    color: var(--text);
+  }
+  .timeline-date {
+    font-size: 10px;
+    color: var(--text-faint);
+    margin-top: 2px;
+  }
+
+  /* ===== SECTIONS ===== */
+  .section {
+    margin-bottom: 24px;
+  }
+  .section-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Line Items Table */
+  .items-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .items-table th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--border);
+    background: var(--accent);
+  }
+  .items-table td {
+    padding: 10px 12px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .items-table tr:last-child td {
+    border-bottom: none;
+  }
+  .items-table .item-name {
+    font-weight: 500;
+  }
+  .items-total {
+    display: flex;
+    justify-content: flex-end;
+    gap: 24px;
+    padding: 10px 12px;
+    background: var(--accent);
+    border-radius: 0 0 var(--radius) var(--radius);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* Sidebar info blocks */
+  .info-block {
+    margin-bottom: 20px;
+  }
+  .info-block-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-faint);
+    margin-bottom: 8px;
+  }
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 6px 0;
+    font-size: 13px;
+  }
+  .info-row-label {
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+  .info-row-value {
+    font-weight: 500;
+    text-align: right;
+  }
+  .info-divider {
+    border: none;
+    border-top: 1px solid var(--border-light);
+    margin: 12px 0;
+  }
+
+  /* Client link */
+  .client-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--accent);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .client-link:hover {
+    background: oklch(0.94 0.005 90);
+  }
+  .client-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: oklch(0.82 0.05 55);
+    color: oklch(0.35 0.05 55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .client-info {
+    flex: 1;
+  }
+  .client-name {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .client-channel {
+    font-size: 11px;
+    color: var(--text-faint);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .channel-badge {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: white;
+  }
+  .channel-badge.tg { background: #229ED9; }
+  .channel-badge.wa { background: #25D366; }
+
+  /* Payment progress */
+  .payment-progress {
+    margin-top: 8px;
+  }
+  .progress-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+  .progress-fill.partial { background: #f59e0b; }
+  .progress-fill.full { background: #22c55e; }
+
+  .payment-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    font-size: 12px;
+  }
+  .payment-label {
+    color: var(--text-muted);
+  }
+  .payment-check {
+    color: #22c55e;
+    font-size: 14px;
+  }
+
+  /* Stage history */
+  .history-item {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    font-size: 12px;
+  }
+  .history-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .history-dot.active {
+    background: var(--text);
+  }
+  .history-text {
+    color: var(--text-muted);
+  }
+  .history-text strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .history-time {
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-top: 2px;
+  }
+
+  /* Delivery info */
+  .delivery-card {
+    background: var(--accent);
+    border-radius: var(--radius);
+    padding: 14px;
+  }
+  .delivery-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 12px;
+  }
+  .delivery-label {
+    color: var(--text-muted);
+  }
+  .delivery-value {
+    font-weight: 500;
+  }
+  .delivery-value.scheduled {
+    color: var(--stage-production-text);
+  }
+
+  /* ===== FLOW DIAGRAM ===== */
+  .flow-section {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 2px solid var(--border);
+  }
+  .flow-title {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+  .flow-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+
+  .flow-diagram {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin: 32px 0;
+  }
+
+  .flow-module {
+    flex: 1;
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    position: relative;
+  }
+  .flow-module.crm {
+    background: #fefce8;
+    border: 1px solid #fde047;
+  }
+  .flow-module.oms {
+    background: #eff6ff;
+    border: 1px solid #93c5fd;
+  }
+
+  .flow-module-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .flow-module.crm .flow-module-label {
+    background: #fde047;
+    color: #854d0e;
+  }
+  .flow-module.oms .flow-module-label {
+    background: #93c5fd;
+    color: #1e40af;
+  }
+
+  .flow-stage {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.7);
+    border-radius: var(--radius);
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .flow-stage.handoff {
+    background: rgba(255,255,255,0.95);
+    border: 2px dashed;
+    font-weight: 600;
+  }
+  .flow-module.crm .flow-stage.handoff {
+    border-color: #f59e0b;
+  }
+  .flow-module.oms .flow-stage.handoff {
+    border-color: #3b82f6;
+  }
+
+  .flow-arrow-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    flex-shrink: 0;
+  }
+  .flow-arrow {
+    font-size: 24px;
+    color: var(--text-muted);
+    line-height: 1;
+  }
+  .flow-arrow-label {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-faint);
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  .flow-note {
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: var(--accent);
+    border-radius: var(--radius);
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .flow-note strong {
+    color: var(--text);
+  }
+
+  /* ===== SCREEN LABELS ===== */
+  .screen-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--text);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    letter-spacing: 0.03em;
+  }
+
+  .screen-divider {
+    height: 48px;
+  }
+
+  /* ===== MOBILE PREVIEW ===== */
+  .mobile-frame {
+    width: 375px;
+    margin: 0 auto;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  }
+
+  .mobile-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+  }
+  .mobile-topbar h3 {
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .mobile-hamburger {
+    width: 20px;
+    height: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .mobile-hamburger span {
+    display: block;
+    height: 2px;
+    background: var(--text);
+    border-radius: 1px;
+  }
+
+  .mobile-body {
+    padding: 16px;
+  }
+
+  .mobile-kpi-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .mobile-kpi {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px;
+  }
+  .mobile-kpi .kpi-value {
+    font-size: 20px;
+  }
+  .mobile-kpi .kpi-label {
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+  .mobile-kpi .kpi-sub {
+    font-size: 10px;
+  }
+
+  .mobile-order-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    margin-bottom: 6px;
+  }
+  .mobile-order-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+  }
+  .mobile-order-title {
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .mobile-order-amount {
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .mobile-order-meta {
+    font-size: 11px;
+    color: var(--text-faint);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .mobile-stage-label {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    border-radius: var(--radius);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 16px; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .order-row { grid-template-columns: 1fr; gap: 4px; }
+    .detail-body { grid-template-columns: 1fr; }
+    .detail-sidebar { border-top: 1px solid var(--border); }
+    .flow-diagram { flex-direction: column; }
+    .flow-arrow-container {
+      width: 100%;
+      flex-direction: row;
+      gap: 8px;
+      padding: 8px 0;
+    }
+  }
+
+  /* ===== ANNOTATION ===== */
+  .annotation {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin: 16px 0;
+    font-size: 12px;
+    color: #92400e;
+    line-height: 1.6;
+  }
+  .annotation strong {
+    font-weight: 600;
+  }
+
+  /* ===== WIREFRAME HEADER ===== */
+  .wireframe-banner {
+    background: var(--text);
+    color: white;
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .wireframe-banner h1 {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .wireframe-banner span {
+    font-size: 12px;
+    opacity: 0.6;
+  }
+
+  .wireframe-nav {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex;
+    gap: 0;
+  }
+  .wireframe-tab {
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .wireframe-tab:hover {
+    color: var(--text);
+  }
+  .wireframe-tab.active {
+    color: var(--text);
+    border-bottom-color: var(--text);
+    font-weight: 600;
+  }
+
+  .wireframe-section {
+    display: none;
+    padding: 32px;
+    max-width: 1260px;
+    margin: 0 auto;
+  }
+  .wireframe-section.active {
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<!-- Wireframe Navigation -->
+<div class="wireframe-banner">
+  <h1>Drapeworks OMS — Wireframe</h1>
+  <span>Order Management Module · March 2026</span>
+</div>
+<div class="wireframe-nav">
+  <div class="wireframe-tab active" onclick="showSection('orders-list')">1. Orders List</div>
+  <div class="wireframe-tab" onclick="showSection('order-detail')">2. Order Detail + Specs</div>
+  <div class="wireframe-tab" onclick="showSection('products')">3. Product Management</div>
+  <div class="wireframe-tab" onclick="showSection('product-picker')">4. Product Picker + Spec Form</div>
+  <div class="wireframe-tab" onclick="showSection('connection')">5. CRM ↔ PMM ↔ OMS Flow</div>
+  <div class="wireframe-tab" onclick="showSection('mobile')">6. Mobile Views</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 1: ORDERS LIST PAGE                  -->
+<!-- ============================================ -->
+<div id="orders-list" class="wireframe-section active">
+
+  <div class="screen-label">Screen 1 — Orders List (Desktop)</div>
+
+  <div class="annotation">
+    <strong>Design note:</strong> The Orders page appears as a new sidebar item between "Clients" and "Settings". The layout uses summary KPI cards at top (matching the dashboard style) + orders grouped by fulfillment stage below. Clicking a KPI card filters to that stage. The badge on the sidebar shows active order count.
+  </div>
+
+  <div class="layout" style="min-height: auto; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden;">
+    <!-- Sidebar -->
+    <div class="sidebar" style="position: relative; height: auto; min-height: 700px;">
+      <div class="sidebar-brand">
+        <h1>Drapeworks</h1>
+        <span>AgentCRM</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="sidebar-item" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Dashboard
+        </a>
+        <a class="sidebar-item" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Clients
+        </a>
+        <a class="sidebar-item" href="#" onclick="showSection('products');return false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          Product Mgmt
+          <span class="sidebar-badge" style="background: #eff6ff; color: #2563a0;">12</span>
+        </a>
+        <a class="sidebar-item active" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16v-2"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg>
+          Orders
+          <span class="sidebar-badge">6</span>
+        </a>
+        <a class="sidebar-item" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          Settings
+        </a>
+      </nav>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">N</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name">Kohjunqiang</div>
+          <div class="sidebar-user-email">kohjunqiang@gmail.c...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main" style="margin-left: 240px;">
+      <div class="page-header">
+        <h2>Orders</h2>
+        <p>Track fulfillment from order placement to delivery</p>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card active" onclick="toggleKpi(this)">
+          <div class="kpi-label">
+            <span class="kpi-dot" style="background: var(--stage-ordered-border);"></span>
+            Ordered
+          </div>
+          <div class="kpi-value">3</div>
+          <div class="kpi-sub">$1,280 total</div>
+        </div>
+        <div class="kpi-card" onclick="toggleKpi(this)">
+          <div class="kpi-label">
+            <span class="kpi-dot" style="background: var(--stage-production-border);"></span>
+            In Production
+          </div>
+          <div class="kpi-value">2</div>
+          <div class="kpi-sub">$1,680 total</div>
+        </div>
+        <div class="kpi-card" onclick="toggleKpi(this)">
+          <div class="kpi-label">
+            <span class="kpi-dot" style="background: var(--stage-ready-border);"></span>
+            Ready
+          </div>
+          <div class="kpi-value">1</div>
+          <div class="kpi-sub">$180 total</div>
+        </div>
+        <div class="kpi-card" onclick="toggleKpi(this)">
+          <div class="kpi-label">
+            <span class="kpi-dot" style="background: var(--stage-delivered-border);"></span>
+            Delivered
+          </div>
+          <div class="kpi-value">4</div>
+          <div class="kpi-sub">This month</div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-bar">
+        <input class="search-input" type="text" placeholder="Search orders...">
+        <button class="filter-btn">Stage <span style="font-size:10px">▾</span></button>
+        <button class="filter-btn">Date <span style="font-size:10px">▾</span></button>
+        <button class="filter-btn">Client <span style="font-size:10px">▾</span></button>
+      </div>
+
+      <!-- Ordered Stage -->
+      <div class="stage-group">
+        <div class="stage-header ordered" onclick="toggleStage(this)">
+          <div class="stage-left">
+            <span class="stage-chevron">▼</span>
+            <span>Ordered</span>
+            <span class="stage-count">3 orders</span>
+          </div>
+          <span class="stage-amount">$1,280</span>
+        </div>
+        <div class="stage-body">
+          <div class="order-row" onclick="showSection('order-detail')">
+            <div>
+              <div class="order-title">Living Room Curtains</div>
+              <div class="order-meta">ORD-001 · 2 items · from Deal "Living Room Curtains"</div>
+            </div>
+            <div class="order-client">
+              <div class="order-client-avatar">S</div>
+              SW
+            </div>
+            <div class="order-amount">$480</div>
+            <div class="order-date">Mar 19</div>
+            <div class="order-arrow">›</div>
+          </div>
+          <div class="order-row">
+            <div>
+              <div class="order-title">Bedroom Blinds Set</div>
+              <div class="order-meta">ORD-002 · 3 items</div>
+              <span class="payment-badge partial">50% deposit paid</span>
+            </div>
+            <div class="order-client">
+              <div class="order-client-avatar">J</div>
+              Jason
+            </div>
+            <div class="order-amount">$320</div>
+            <div class="order-date">Mar 18</div>
+            <div class="order-arrow">›</div>
+          </div>
+          <div class="order-row">
+            <div>
+              <div class="order-title">Study Room Drapes</div>
+              <div class="order-meta">ORD-003 · 1 item</div>
+              <span class="payment-badge paid">Fully paid</span>
+            </div>
+            <div class="order-client">
+              <div class="order-client-avatar">S</div>
+              SW
+            </div>
+            <div class="order-amount">$480</div>
+            <div class="order-date">Mar 17</div>
+            <div class="order-arrow">›</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- In Production Stage -->
+      <div class="stage-group">
+        <div class="stage-header production" onclick="toggleStage(this)">
+          <div class="stage-left">
+            <span class="stage-chevron">▼</span>
+            <span>In Production</span>
+            <span class="stage-count">2 orders</span>
+          </div>
+          <span class="stage-amount">$1,680</span>
+        </div>
+        <div class="stage-body">
+          <div class="order-row">
+            <div>
+              <div class="order-title">Office Drapes — Full Set</div>
+              <div class="order-meta">ORD-004 · 4 items</div>
+              <span class="payment-badge partial">50% deposit paid</span>
+            </div>
+            <div class="order-client">
+              <div class="order-client-avatar">A</div>
+              Allyson
+            </div>
+            <div class="order-amount">$1,200</div>
+            <div class="order-date urgent">Est. 5 days</div>
+            <div class="order-arrow">›</div>
+          </div>
+          <div class="order-row">
+            <div>
+              <div class="order-title">Dining Room Curtains</div>
+              <div class="order-meta">ORD-005 · 2 items</div>
+            </div>
+            <div class="order-client">
+              <div class="order-client-avatar">S</div>
+              SW
+            </div>
+            <div class="order-amount">$480</div>
+            <div class="order-date">Est. 8 days</div>
+            <div class="order-arrow">›</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ready Stage -->
+      <div class="stage-group">
+        <div class="stage-header ready" onclick="toggleStage(this)">
+          <div class="stage-left">
+            <span class="stage-chevron">▼</span>
+            <span>Ready for Delivery</span>
+            <span class="stage-count">1 order</span>
+          </div>
+          <span class="stage-amount">$180</span>
+        </div>
+        <div class="stage-body">
+          <div class="order-row">
+            <div>
+              <div class="order-title">Kitchen Valance</div>
+              <div class="order-meta">ORD-006 · 1 item</div>
+              <span class="payment-badge paid">Fully paid</span>
+            </div>
+            <div class="order-client">
+              <div class="order-client-avatar">J</div>
+              J
+            </div>
+            <div class="order-amount">$180</div>
+            <div class="order-date urgent">Tomorrow</div>
+            <div class="order-arrow">›</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 2: ORDER DETAIL VIEW                 -->
+<!-- ============================================ -->
+<div id="order-detail" class="wireframe-section">
+
+  <div class="screen-label">Screen 2 — Order Detail View</div>
+
+  <div class="annotation">
+    <strong>Design note:</strong> Clicking an order row expands to a full detail view. The left panel shows the stage timeline, line items, and delivery info. The right sidebar shows client info, payment status, and stage history. The "Advance Stage" button moves the order to the next fulfillment step.
+  </div>
+
+  <div class="order-detail">
+    <!-- Header -->
+    <div class="detail-header">
+      <div class="detail-header-left">
+        <span class="detail-back" onclick="showSection('orders-list')">←</span>
+        <div class="detail-title">
+          <h3>Living Room Curtains</h3>
+          <span>ORD-001 · Created Mar 19, 2026 · from Deal #D-047</span>
+        </div>
+      </div>
+      <div class="detail-actions">
+        <button class="btn">Edit</button>
+        <button class="btn-primary btn">Advance to In Production →</button>
+      </div>
+    </div>
+
+    <div class="detail-body">
+      <!-- Left: Main content -->
+      <div class="detail-main">
+
+        <!-- Stage Timeline -->
+        <div class="section">
+          <div class="section-title">Fulfillment Progress</div>
+          <div class="timeline">
+            <div class="timeline-step completed">
+              <div class="timeline-dot">✓</div>
+              <div class="timeline-label">Ordered</div>
+              <div class="timeline-date">Mar 19</div>
+            </div>
+            <div class="timeline-step current">
+              <div class="timeline-dot">2</div>
+              <div class="timeline-label">In Production</div>
+              <div class="timeline-date">Current</div>
+            </div>
+            <div class="timeline-step">
+              <div class="timeline-dot">3</div>
+              <div class="timeline-label">Ready</div>
+              <div class="timeline-date">—</div>
+            </div>
+            <div class="timeline-step">
+              <div class="timeline-dot">4</div>
+              <div class="timeline-label">Delivered</div>
+              <div class="timeline-date">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Line Items with Per-Item Spec Sheets -->
+        <div class="section">
+          <div class="section-title">Line Items & Specifications</div>
+
+          <!-- Item 1: EXPANDED with spec sheet -->
+          <div style="border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 8px; overflow: hidden;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; cursor: pointer; background: oklch(0.985 0.002 90);" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="color: var(--text-faint); font-size: 12px;">▼</span>
+                <div>
+                  <div style="font-weight: 600; font-size: 13px;">Blackout Curtain — Ivory</div>
+                  <div style="font-size: 11px; color: var(--text-faint);">From catalog · Qty: 2 · Master Bedroom - Left Window</div>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-weight: 600; font-size: 13px;">$320</div>
+                <div style="font-size: 11px; color: var(--text-faint);">$160 × 2</div>
+              </div>
+            </div>
+            <!-- Expanded spec sheet -->
+            <div style="padding: 0 16px 16px; border-top: 1px solid var(--border-light);">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px;">
+                <!-- Dimensions -->
+                <div style="background: var(--accent); border-radius: var(--radius); padding: 12px;">
+                  <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-faint); margin-bottom: 8px;">Dimensions</div>
+                  <div style="display: flex; gap: 16px;">
+                    <div>
+                      <div style="font-size: 10px; color: var(--text-muted);">Width</div>
+                      <div style="font-size: 14px; font-weight: 600;">180 cm</div>
+                    </div>
+                    <div>
+                      <div style="font-size: 10px; color: var(--text-muted);">Drop</div>
+                      <div style="font-size: 14px; font-weight: 600;">240 cm</div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Location -->
+                <div style="background: var(--accent); border-radius: var(--radius); padding: 12px;">
+                  <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-faint); margin-bottom: 8px;">Location</div>
+                  <div style="font-size: 13px; font-weight: 500;">Master Bedroom</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">Left Window (bay)</div>
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-top: 8px;">
+                <div style="background: var(--accent); border-radius: var(--radius); padding: 10px;">
+                  <div style="font-size: 10px; color: var(--text-muted);">Fixing</div>
+                  <div style="font-size: 12px; font-weight: 500;">Ceiling mount</div>
+                </div>
+                <div style="background: var(--accent); border-radius: var(--radius); padding: 10px;">
+                  <div style="font-size: 10px; color: var(--text-muted);">Stack</div>
+                  <div style="font-size: 12px; font-weight: 500;">Left</div>
+                </div>
+                <div style="background: var(--accent); border-radius: var(--radius); padding: 10px;">
+                  <div style="font-size: 10px; color: var(--text-muted);">Lining</div>
+                  <div style="font-size: 12px; font-weight: 500;">Blockout</div>
+                </div>
+                <div style="background: var(--accent); border-radius: var(--radius); padding: 10px;">
+                  <div style="font-size: 10px; color: var(--text-muted);">Motor</div>
+                  <div style="font-size: 12px; font-weight: 500;">Manual</div>
+                </div>
+              </div>
+              <!-- Notes -->
+              <div style="margin-top: 8px; background: #fffbeb; border: 1px solid #fde68a; border-radius: var(--radius); padding: 10px;">
+                <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #92400e; margin-bottom: 4px;">Notes</div>
+                <div style="font-size: 12px; color: #78350f;">Customer wants curtain to touch floor exactly. Measure on-site before cutting — floor may be uneven near bay window. Use S-fold style, 120mm spacing.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 2: COLLAPSED -->
+          <div style="border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 8px; overflow: hidden;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; cursor: pointer;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="color: var(--text-faint); font-size: 12px;">›</span>
+                <div>
+                  <div style="font-weight: 600; font-size: 13px;">Curtain Rod — Matte Black, 180cm</div>
+                  <div style="font-size: 11px; color: var(--text-faint);">From catalog · Qty: 1 · Master Bedroom - Left Window</div>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-weight: 600; font-size: 13px;">$85</div>
+              </div>
+            </div>
+            <div style="padding: 0 16px 16px; border-top: 1px solid var(--border-light); display: none;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px;">
+                <div style="background: var(--accent); border-radius: var(--radius); padding: 10px;">
+                  <div style="font-size: 10px; color: var(--text-muted);">Width</div>
+                  <div style="font-size: 12px; font-weight: 500;">180 cm</div>
+                </div>
+                <div style="background: var(--accent); border-radius: var(--radius); padding: 10px;">
+                  <div style="font-size: 10px; color: var(--text-muted);">Fixing</div>
+                  <div style="font-size: 12px; font-weight: 500;">Ceiling mount</div>
+                </div>
+                <div style="background: var(--accent); border-radius: var(--radius); padding: 10px;">
+                  <div style="font-size: 10px; color: var(--text-muted);">Finish</div>
+                  <div style="font-size: 12px; font-weight: 500;">Matte Black</div>
+                </div>
+              </div>
+              <div style="margin-top: 8px; background: #fffbeb; border: 1px solid #fde68a; border-radius: var(--radius); padding: 10px;">
+                <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #92400e; margin-bottom: 4px;">Notes</div>
+                <div style="font-size: 12px; color: #78350f;">Include brackets + ceiling plates. Double bracket needed for bay window join.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 3: COLLAPSED -->
+          <div style="border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 8px; overflow: hidden;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; cursor: pointer;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="color: var(--text-faint); font-size: 12px;">›</span>
+                <div>
+                  <div style="font-weight: 600; font-size: 13px;">Installation Service</div>
+                  <div style="font-size: 11px; color: var(--text-faint);">From catalog · Qty: 1</div>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-weight: 600; font-size: 13px;">$75</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Total -->
+          <div style="display: flex; justify-content: flex-end; gap: 24px; padding: 10px 16px; background: var(--accent); border-radius: var(--radius); font-size: 14px; font-weight: 700;">
+            <span>Total</span>
+            <span>$480</span>
+          </div>
+        </div>
+
+        <!-- Delivery Info -->
+        <div class="section">
+          <div class="section-title">Delivery & Installation</div>
+          <div class="delivery-card">
+            <div class="delivery-row">
+              <span class="delivery-label">Delivery Address</span>
+              <span class="delivery-value">123 Orchard Road, #12-05, Singapore 238888</span>
+            </div>
+            <div class="delivery-row">
+              <span class="delivery-label">Scheduled Date</span>
+              <span class="delivery-value scheduled">Mar 28, 2026 (Sat) · 2:00 PM</span>
+            </div>
+            <div class="delivery-row">
+              <span class="delivery-label">Installation Notes</span>
+              <span class="delivery-value">Bay window, need ladder. Customer prefers afternoon slot.</span>
+            </div>
+            <div class="delivery-row">
+              <span class="delivery-label">Assigned To</span>
+              <span class="delivery-value">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Notes -->
+        <div class="section">
+          <div class="section-title">Order Notes</div>
+          <textarea style="width: 100%; height: 70px; border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; font-family: inherit; font-size: 13px; resize: vertical; color: var(--text);" placeholder="Add notes about this order..."></textarea>
+        </div>
+
+      </div>
+
+      <!-- Right: Sidebar -->
+      <div class="detail-sidebar">
+
+        <!-- Client Info -->
+        <div class="info-block">
+          <div class="info-block-title">Client</div>
+          <a class="client-link" href="#">
+            <div class="client-avatar">S</div>
+            <div class="client-info">
+              <div class="client-name">SW</div>
+              <div class="client-channel">
+                <span class="channel-badge tg">TG</span>
+                tembusu
+              </div>
+            </div>
+            <span style="color: var(--text-faint); font-size: 14px;">›</span>
+          </a>
+        </div>
+
+        <hr class="info-divider">
+
+        <!-- Payment Status -->
+        <div class="info-block">
+          <div class="info-block-title">Payment</div>
+          <div class="payment-progress">
+            <div class="info-row">
+              <span class="info-row-label">Total</span>
+              <span class="info-row-value">$480</span>
+            </div>
+            <div class="info-row">
+              <span class="info-row-label">Paid</span>
+              <span class="info-row-value" style="color: #22c55e;">$240</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill partial" style="width: 50%;"></div>
+            </div>
+            <div class="payment-row">
+              <span class="payment-label">50% Deposit</span>
+              <span>$240 <span class="payment-check">✓</span></span>
+            </div>
+            <div class="payment-row">
+              <span class="payment-label">Balance on delivery</span>
+              <span style="color: var(--text-faint);">$240 — pending</span>
+            </div>
+          </div>
+        </div>
+
+        <hr class="info-divider">
+
+        <!-- Linked Deal -->
+        <div class="info-block">
+          <div class="info-block-title">Linked Deal</div>
+          <div class="info-row">
+            <span class="info-row-label">Deal</span>
+            <span class="info-row-value" style="color: var(--stage-production-text); cursor: pointer;">Living Room Curtains ›</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row-label">Deal Stage</span>
+            <span class="info-row-value">Ordered</span>
+          </div>
+        </div>
+
+        <hr class="info-divider">
+
+        <!-- Stage History -->
+        <div class="info-block">
+          <div class="info-block-title">Stage History</div>
+          <div class="history-item">
+            <div class="history-dot active"></div>
+            <div>
+              <div class="history-text"><strong>Moved to Ordered</strong></div>
+              <div class="history-time">Mar 19, 2026 · 3:42 PM · Auto-created from deal</div>
+            </div>
+          </div>
+          <div class="history-item">
+            <div class="history-dot active"></div>
+            <div>
+              <div class="history-text"><strong>Deposit received</strong> — $240 (50%)</div>
+              <div class="history-time">Mar 19, 2026 · 4:10 PM</div>
+            </div>
+          </div>
+          <div class="history-item">
+            <div class="history-dot"></div>
+            <div>
+              <div class="history-text" style="color: var(--text-faint);">Delivery scheduled — Mar 28</div>
+              <div class="history-time">Mar 20, 2026 · 10:15 AM</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 3: PRODUCTS & PRICING                -->
+<!-- ============================================ -->
+<div id="products" class="wireframe-section">
+
+  <div class="screen-label">Screen 3 — Product Management Module</div>
+
+  <div class="annotation">
+    <strong>Design note:</strong> Product Management is now a <strong>separate sidebar item</strong> (Dashboard → Clients → <strong>Product Mgmt</strong> → Orders → Settings), following the PIM (Product Information Management) pattern used by industry tools like BlindMatrix and InterioApp. The catalog is the master source of truth — it feeds into CRM deal line items and OMS order items. Each product defines the template; per-order customization (dimensions, notes) lives on the line item, not here.
+  </div>
+
+  <!-- Products as standalone page -->
+  <div style="border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--card);">
+
+    <!-- Page header -->
+    <div style="padding: 20px 24px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+        <div>
+          <h2 style="font-size: 22px; font-weight: 700; letter-spacing: -0.02em;">Product Management</h2>
+          <p style="font-size: 13px; color: var(--text-muted); margin-top: 2px;">Master catalog — defines product templates, pricing, and variants</p>
+        </div>
+        <button class="btn-primary btn" style="font-size: 13px;">+ Add Product</button>
+      </div>
+    </div>
+
+    <!-- Summary cards -->
+    <div style="padding: 20px 24px;">
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Products</div>
+          <div class="kpi-value">12</div>
+          <div class="kpi-sub">across 4 categories</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Avg Margin</div>
+          <div class="kpi-value" style="color: #166534;">42%</div>
+          <div class="kpi-sub">weighted by sales</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Best Seller</div>
+          <div class="kpi-value" style="font-size: 16px;">Blackout Curtain</div>
+          <div class="kpi-sub">8 orders this month</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Revenue (MTD)</div>
+          <div class="kpi-value">$4,280</div>
+          <div class="kpi-sub">from products</div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-bar">
+        <input class="search-input" type="text" placeholder="Search products...">
+        <button class="filter-btn">Category <span style="font-size:10px">▾</span></button>
+        <button class="filter-btn">Sort by <span style="font-size:10px">▾</span></button>
+      </div>
+
+      <!-- Product Category: Curtains -->
+      <div class="stage-group">
+        <div class="stage-header" style="background: oklch(0.97 0.01 55); border-color: oklch(0.9 0.03 55);" onclick="toggleStage(this)">
+          <div class="stage-left">
+            <span class="stage-chevron">▼</span>
+            <span>Curtains & Drapes</span>
+            <span class="stage-count">5 products</span>
+          </div>
+        </div>
+        <div class="stage-body">
+          <!-- Product row header -->
+          <div style="display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr 0.8fr 0.5fr; gap: 12px; padding: 8px 16px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-faint); border-bottom: 1px solid var(--border);">
+            <div>Product</div>
+            <div>Cost</div>
+            <div>Sell Price</div>
+            <div>Margin</div>
+            <div>Variants</div>
+            <div></div>
+          </div>
+          <!-- Product 1 - Expanded -->
+          <div style="border-bottom: 1px solid var(--border-light);">
+            <div style="display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr 0.8fr 0.5fr; gap: 12px; padding: 14px 16px; align-items: center; cursor: pointer; background: oklch(0.985 0.002 90);">
+              <div>
+                <div style="font-weight: 600; font-size: 13px;">Blackout Curtain</div>
+                <div style="font-size: 11px; color: var(--text-faint);">Premium blackout fabric, custom sizes</div>
+              </div>
+              <div style="font-size: 13px; color: var(--text-muted);">$65 – $120</div>
+              <div style="font-size: 13px; font-weight: 500;">$140 – $260</div>
+              <div>
+                <span style="font-size: 12px; font-weight: 600; color: #166534; background: #ecfdf5; padding: 2px 8px; border-radius: 10px;">46%</span>
+              </div>
+              <div style="font-size: 12px; color: var(--text-muted);">6 variants</div>
+              <div style="color: var(--text-faint); text-align: right;">▼</div>
+            </div>
+            <!-- Expanded variants table -->
+            <div style="padding: 0 16px 16px 16px;">
+              <div style="background: var(--accent); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border);">
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 0.8fr 0.8fr 0.7fr; gap: 8px; padding: 8px 12px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-faint); border-bottom: 1px solid var(--border);">
+                  <div>Variant</div>
+                  <div>Size</div>
+                  <div>Fabric</div>
+                  <div>Cost</div>
+                  <div>Sell</div>
+                  <div>Margin</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 0.8fr 0.8fr 0.7fr; gap: 8px; padding: 8px 12px; font-size: 12px; background: var(--card); border-bottom: 1px solid var(--border-light);">
+                  <div style="font-weight: 500;">Ivory</div>
+                  <div>180cm</div>
+                  <div>Polyester</div>
+                  <div style="color: var(--text-muted);">$65</div>
+                  <div style="font-weight: 500;">$140</div>
+                  <div style="color: #166534; font-weight: 500;">54%</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 0.8fr 0.8fr 0.7fr; gap: 8px; padding: 8px 12px; font-size: 12px; background: var(--card); border-bottom: 1px solid var(--border-light);">
+                  <div style="font-weight: 500;">Ivory</div>
+                  <div>240cm</div>
+                  <div>Polyester</div>
+                  <div style="color: var(--text-muted);">$85</div>
+                  <div style="font-weight: 500;">$160</div>
+                  <div style="color: #166534; font-weight: 500;">47%</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 0.8fr 0.8fr 0.7fr; gap: 8px; padding: 8px 12px; font-size: 12px; background: var(--card); border-bottom: 1px solid var(--border-light);">
+                  <div style="font-weight: 500;">Charcoal</div>
+                  <div>180cm</div>
+                  <div>Linen blend</div>
+                  <div style="color: var(--text-muted);">$90</div>
+                  <div style="font-weight: 500;">$195</div>
+                  <div style="color: #166534; font-weight: 500;">54%</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 0.8fr 0.8fr 0.7fr; gap: 8px; padding: 8px 12px; font-size: 12px; background: var(--card); border-bottom: 1px solid var(--border-light);">
+                  <div style="font-weight: 500;">Charcoal</div>
+                  <div>240cm</div>
+                  <div>Linen blend</div>
+                  <div style="color: var(--text-muted);">$120</div>
+                  <div style="font-weight: 500;">$260</div>
+                  <div style="color: #166534; font-weight: 500;">54%</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 0.8fr 0.8fr 0.7fr; gap: 8px; padding: 8px 12px; font-size: 12px; background: var(--card); border-bottom: 1px solid var(--border-light);">
+                  <div style="font-weight: 500;">Sage Green</div>
+                  <div>180cm</div>
+                  <div>Polyester</div>
+                  <div style="color: var(--text-muted);">$65</div>
+                  <div style="font-weight: 500;">$140</div>
+                  <div style="color: #166534; font-weight: 500;">54%</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 0.8fr 0.8fr 0.7fr; gap: 8px; padding: 8px 12px; font-size: 12px; background: var(--card);">
+                  <div style="font-weight: 500;">Sage Green</div>
+                  <div>240cm</div>
+                  <div>Polyester</div>
+                  <div style="color: var(--text-muted);">$85</div>
+                  <div style="font-weight: 500;">$160</div>
+                  <div style="color: #166534; font-weight: 500;">47%</div>
+                </div>
+              </div>
+              <div style="margin-top: 8px; display: flex; gap: 8px;">
+                <button class="btn" style="font-size: 11px; padding: 5px 12px;">+ Add Variant</button>
+                <button class="btn" style="font-size: 11px; padding: 5px 12px;">Edit Product</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product 2 - Collapsed -->
+          <div class="order-row" style="display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr 0.8fr 0.5fr;">
+            <div>
+              <div style="font-weight: 600; font-size: 13px;">Sheer Curtain</div>
+              <div style="font-size: 11px; color: var(--text-faint);">Light voile fabric, standard sizes</div>
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted);">$30 – $55</div>
+            <div style="font-size: 13px; font-weight: 500;">$75 – $120</div>
+            <div>
+              <span style="font-size: 12px; font-weight: 600; color: #166534; background: #ecfdf5; padding: 2px 8px; border-radius: 10px;">52%</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted);">4 variants</div>
+            <div style="color: var(--text-faint); text-align: right;">›</div>
+          </div>
+
+          <!-- Product 3 - Collapsed -->
+          <div class="order-row" style="display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr 0.8fr 0.5fr;">
+            <div>
+              <div style="font-weight: 600; font-size: 13px;">Day-Night Curtain</div>
+              <div style="font-size: 11px; color: var(--text-faint);">Dual-layer alternating fabric</div>
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted);">$95 – $150</div>
+            <div style="font-size: 13px; font-weight: 500;">$220 – $340</div>
+            <div>
+              <span style="font-size: 12px; font-weight: 600; color: #166534; background: #ecfdf5; padding: 2px 8px; border-radius: 10px;">55%</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted);">3 variants</div>
+            <div style="color: var(--text-faint); text-align: right;">›</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Category: Blinds -->
+      <div class="stage-group">
+        <div class="stage-header" style="background: oklch(0.97 0.01 200); border-color: oklch(0.9 0.03 200);" onclick="toggleStage(this)">
+          <div class="stage-left">
+            <span class="stage-chevron">▼</span>
+            <span>Blinds</span>
+            <span class="stage-count">3 products</span>
+          </div>
+        </div>
+        <div class="stage-body">
+          <div style="display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr 0.8fr 0.5fr; gap: 12px; padding: 8px 16px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-faint); border-bottom: 1px solid var(--border);">
+            <div>Product</div><div>Cost</div><div>Sell Price</div><div>Margin</div><div>Variants</div><div></div>
+          </div>
+          <div class="order-row" style="display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr 0.8fr 0.5fr;">
+            <div>
+              <div style="font-weight: 600; font-size: 13px;">Roller Blind</div>
+              <div style="font-size: 11px; color: var(--text-faint);">Motorized or manual, blackout fabric</div>
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted);">$45 – $90</div>
+            <div style="font-size: 13px; font-weight: 500;">$95 – $180</div>
+            <div><span style="font-size: 12px; font-weight: 600; color: #92400e; background: #fffbeb; padding: 2px 8px; border-radius: 10px;">38%</span></div>
+            <div style="font-size: 12px; color: var(--text-muted);">4 variants</div>
+            <div style="color: var(--text-faint); text-align: right;">›</div>
+          </div>
+          <div class="order-row" style="display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr 0.8fr 0.5fr;">
+            <div>
+              <div style="font-weight: 600; font-size: 13px;">Venetian Blind</div>
+              <div style="font-size: 11px; color: var(--text-faint);">Aluminum slats, custom width</div>
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted);">$55 – $80</div>
+            <div style="font-size: 13px; font-weight: 500;">$120 – $170</div>
+            <div><span style="font-size: 12px; font-weight: 600; color: #166534; background: #ecfdf5; padding: 2px 8px; border-radius: 10px;">45%</span></div>
+            <div style="font-size: 12px; color: var(--text-muted);">2 variants</div>
+            <div style="color: var(--text-faint); text-align: right;">›</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Category: Services -->
+      <div class="stage-group">
+        <div class="stage-header" style="background: oklch(0.97 0.01 300); border-color: oklch(0.9 0.03 300);" onclick="toggleStage(this)">
+          <div class="stage-left">
+            <span class="stage-chevron">▼</span>
+            <span>Services</span>
+            <span class="stage-count">2 products</span>
+          </div>
+        </div>
+        <div class="stage-body">
+          <div style="display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr 0.8fr 0.5fr; gap: 12px; padding: 8px 16px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-faint); border-bottom: 1px solid var(--border);">
+            <div>Product</div><div>Cost</div><div>Sell Price</div><div>Margin</div><div>Variants</div><div></div>
+          </div>
+          <div class="order-row" style="display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr 0.8fr 0.5fr;">
+            <div>
+              <div style="font-weight: 600; font-size: 13px;">Installation Service</div>
+              <div style="font-size: 11px; color: var(--text-faint);">On-site measurement, fitting & cleanup</div>
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted);">$30</div>
+            <div style="font-size: 13px; font-weight: 500;">$75</div>
+            <div><span style="font-size: 12px; font-weight: 600; color: #166534; background: #ecfdf5; padding: 2px 8px; border-radius: 10px;">60%</span></div>
+            <div style="font-size: 12px; color: var(--text-muted);">—</div>
+            <div style="color: var(--text-faint); text-align: right;">›</div>
+          </div>
+          <div class="order-row" style="display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr 0.8fr 0.5fr;">
+            <div>
+              <div style="font-weight: 600; font-size: 13px;">Curtain Rod & Bracket</div>
+              <div style="font-size: 11px; color: var(--text-faint);">Hardware, includes mounting</div>
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted);">$25 – $45</div>
+            <div style="font-size: 13px; font-weight: 500;">$65 – $120</div>
+            <div><span style="font-size: 12px; font-weight: 600; color: #166534; background: #ecfdf5; padding: 2px 8px; border-radius: 10px;">58%</span></div>
+            <div style="font-size: 12px; color: var(--text-muted);">3 variants</div>
+            <div style="color: var(--text-faint); text-align: right;">›</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 4: PRODUCT PICKER (CRM INTEGRATION)  -->
+<!-- ============================================ -->
+<div id="product-picker" class="wireframe-section">
+
+  <div class="screen-label">Screen 4 — Product Picker in CRM Deal</div>
+
+  <div class="annotation">
+    <strong>Design note:</strong> When adding line items to a deal in the CRM Clients module, the input field now has autocomplete from the product catalog. There's also a "Browse Catalog" button that opens a full modal. If no product catalog exists, the input stays free-text (graceful fallback). Selected products auto-fill price but remain editable for custom quotes.
+  </div>
+
+  <!-- Two side-by-side wireframes -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+
+    <!-- Left: Autocomplete -->
+    <div>
+      <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">Mode 1: Quick Autocomplete</div>
+      <div style="border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--card);">
+        <!-- Simulated deal line items area -->
+        <div style="padding: 16px;">
+          <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-faint); margin-bottom: 10px;">Line Items</div>
+
+          <!-- Existing item -->
+          <div style="display: grid; grid-template-columns: 2fr 0.5fr 0.8fr 0.8fr 30px; gap: 8px; align-items: center; margin-bottom: 8px;">
+            <div style="padding: 7px 10px; background: var(--accent); border-radius: var(--radius); font-size: 12px;">Blackout Curtain — Ivory, 240cm</div>
+            <div style="padding: 7px 10px; background: var(--accent); border-radius: var(--radius); font-size: 12px; text-align: center;">2</div>
+            <div style="padding: 7px 10px; background: var(--accent); border-radius: var(--radius); font-size: 12px;">$160</div>
+            <div style="font-size: 12px; font-weight: 500; text-align: right;">$320</div>
+            <div style="color: var(--text-faint); cursor: pointer; text-align: center;">×</div>
+          </div>
+
+          <!-- New item being typed with autocomplete -->
+          <div style="position: relative; margin-bottom: 8px;">
+            <div style="display: grid; grid-template-columns: 2fr 0.5fr 0.8fr 0.8fr 30px; gap: 8px; align-items: center;">
+              <div style="position: relative;">
+                <input class="search-input" style="width: 100%; max-width: none; padding-left: 10px; background-image: none; font-size: 12px; border-color: var(--stage-production-border);" type="text" value="curtain rod">
+                <!-- Autocomplete dropdown -->
+                <div style="position: absolute; top: 100%; left: 0; right: 0; background: var(--card); border: 1px solid var(--border); border-radius: 0 0 var(--radius) var(--radius); box-shadow: 0 6px 16px rgba(0,0,0,0.08); z-index: 10; overflow: hidden;">
+                  <div style="padding: 9px 12px; font-size: 12px; cursor: pointer; background: oklch(0.97 0.01 240); display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                      <div style="font-weight: 600;">Curtain Rod — Matte Black, 120cm</div>
+                      <div style="font-size: 10px; color: var(--text-faint);">Hardware · 3 variants</div>
+                    </div>
+                    <span style="font-size: 12px; font-weight: 500;">$65</span>
+                  </div>
+                  <div style="padding: 9px 12px; font-size: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-light);">
+                    <div>
+                      <div style="font-weight: 600;">Curtain Rod — Matte Black, 180cm</div>
+                      <div style="font-size: 10px; color: var(--text-faint);">Hardware · 3 variants</div>
+                    </div>
+                    <span style="font-size: 12px; font-weight: 500;">$85</span>
+                  </div>
+                  <div style="padding: 9px 12px; font-size: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-light);">
+                    <div>
+                      <div style="font-weight: 600;">Curtain Rod — Brushed Gold, 180cm</div>
+                      <div style="font-size: 10px; color: var(--text-faint);">Hardware · 3 variants</div>
+                    </div>
+                    <span style="font-size: 12px; font-weight: 500;">$120</span>
+                  </div>
+                  <div style="padding: 7px 12px; font-size: 11px; cursor: pointer; color: var(--text-muted); border-top: 1px solid var(--border); background: var(--accent);">
+                    + Add as custom item (not in catalog)
+                  </div>
+                </div>
+              </div>
+              <div style="padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 12px; text-align: center; color: var(--text-faint);">1</div>
+              <div style="padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 12px; color: var(--text-faint);">—</div>
+              <div style="font-size: 12px; color: var(--text-faint);">—</div>
+              <div></div>
+            </div>
+          </div>
+
+          <div style="margin-top: 80px; display: flex; gap: 8px;">
+            <button class="btn" style="font-size: 11px; padding: 5px 12px;">+ Add Item</button>
+            <button class="btn" style="font-size: 11px; padding: 5px 12px; color: var(--stage-production-text);">📋 Browse Catalog</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Catalog Browser Modal -->
+    <div>
+      <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">Mode 2: Catalog Browser Modal</div>
+      <div style="border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--card); box-shadow: 0 8px 30px rgba(0,0,0,0.12);">
+        <!-- Modal header -->
+        <div style="padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="font-size: 15px; font-weight: 700;">Select Product</h3>
+          <span style="color: var(--text-faint); cursor: pointer; font-size: 18px;">×</span>
+        </div>
+        <!-- Search + category filter -->
+        <div style="padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; gap: 8px;">
+          <input class="search-input" style="flex: 1; max-width: none; font-size: 12px;" type="text" placeholder="Search products...">
+          <button class="filter-btn" style="font-size: 11px;">All Categories <span style="font-size:10px">▾</span></button>
+        </div>
+        <!-- Product grid -->
+        <div style="padding: 16px 20px; max-height: 320px; overflow-y: auto;">
+          <!-- Selected product -->
+          <div style="padding: 10px 14px; margin-bottom: 6px; border: 2px solid var(--text); border-radius: var(--radius); background: oklch(0.97 0.005 90); display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+            <div>
+              <div style="font-weight: 600; font-size: 13px;">Blackout Curtain — Ivory, 240cm</div>
+              <div style="font-size: 10px; color: var(--text-faint);">Curtains & Drapes · Cost $85 · Margin 47%</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-weight: 600; font-size: 13px;">$160</div>
+              <div style="font-size: 10px; color: #166534;">✓ Selected</div>
+            </div>
+          </div>
+          <!-- Available product -->
+          <div style="padding: 10px 14px; margin-bottom: 6px; border: 1px solid var(--border); border-radius: var(--radius); display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+            <div>
+              <div style="font-weight: 600; font-size: 13px;">Blackout Curtain — Charcoal, 240cm</div>
+              <div style="font-size: 10px; color: var(--text-faint);">Curtains & Drapes · Cost $120 · Margin 54%</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-weight: 600; font-size: 13px;">$260</div>
+            </div>
+          </div>
+          <!-- Available product -->
+          <div style="padding: 10px 14px; margin-bottom: 6px; border: 1px solid var(--border); border-radius: var(--radius); display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+            <div>
+              <div style="font-weight: 600; font-size: 13px;">Sheer Curtain — White, 180cm</div>
+              <div style="font-size: 10px; color: var(--text-faint);">Curtains & Drapes · Cost $30 · Margin 52%</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-weight: 600; font-size: 13px;">$75</div>
+            </div>
+          </div>
+          <!-- Available product -->
+          <div style="padding: 10px 14px; margin-bottom: 6px; border: 1px solid var(--border); border-radius: var(--radius); display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+            <div>
+              <div style="font-weight: 600; font-size: 13px;">Roller Blind — White, Motorized</div>
+              <div style="font-size: 10px; color: var(--text-faint);">Blinds · Cost $90 · Margin 38%</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-weight: 600; font-size: 13px;">$180</div>
+            </div>
+          </div>
+          <!-- Available product -->
+          <div style="padding: 10px 14px; margin-bottom: 6px; border: 1px solid var(--border); border-radius: var(--radius); display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+            <div>
+              <div style="font-weight: 600; font-size: 13px;">Installation Service</div>
+              <div style="font-size: 10px; color: var(--text-faint);">Services · Cost $30 · Margin 60%</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-weight: 600; font-size: 13px;">$75</div>
+            </div>
+          </div>
+        </div>
+        <!-- Modal footer -->
+        <div style="padding: 12px 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--accent);">
+          <div style="font-size: 12px; color: var(--text-muted);">1 product selected · $160</div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn" style="font-size: 12px;">Cancel</button>
+            <button class="btn-primary btn" style="font-size: 12px;">Add Selected</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Spec Form after selection -->
+  <div style="margin-top: 32px;">
+    <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">Step 2: Per-Item Spec Sheet (after product selected)</div>
+    <div class="annotation">
+      <strong>Design note:</strong> After selecting a product from autocomplete or catalog browser, a spec form appears below the line item. Every product instance gets its own dimensions, room location, fixing details, and notes. This is critical for made-to-measure businesses where every window is different.
+    </div>
+
+    <div style="border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--card); max-width: 680px;">
+      <!-- Selected product header -->
+      <div style="padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: oklch(0.985 0.002 90);">
+        <div>
+          <div style="font-weight: 600; font-size: 14px;">Blackout Curtain — Ivory</div>
+          <div style="font-size: 11px; color: var(--text-faint);">From catalog · Base price: $160</div>
+        </div>
+        <span style="font-size: 12px; color: var(--text-faint); cursor: pointer;">× Remove</span>
+      </div>
+      <!-- Spec form -->
+      <div style="padding: 20px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <!-- Row 1: Dimensions -->
+          <div>
+            <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Width (cm) *</label>
+            <input class="search-input" style="width: 100%; max-width: none; padding-left: 10px; background-image: none; font-size: 13px;" type="text" value="180">
+          </div>
+          <div>
+            <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Drop / Height (cm) *</label>
+            <input class="search-input" style="width: 100%; max-width: none; padding-left: 10px; background-image: none; font-size: 13px;" type="text" value="240">
+          </div>
+          <!-- Row 2: Room -->
+          <div>
+            <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Room Name *</label>
+            <input class="search-input" style="width: 100%; max-width: none; padding-left: 10px; background-image: none; font-size: 13px;" type="text" value="Master Bedroom">
+          </div>
+          <div>
+            <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Window Position</label>
+            <input class="search-input" style="width: 100%; max-width: none; padding-left: 10px; background-image: none; font-size: 13px;" type="text" value="Left Window (bay)">
+          </div>
+          <!-- Row 3: Fixing & Stack -->
+          <div>
+            <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Fixing Type</label>
+            <div style="padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; background: var(--card); display: flex; justify-content: space-between; cursor: pointer;">
+              <span>Ceiling mount</span>
+              <span style="color: var(--text-faint); font-size: 10px;">▾</span>
+            </div>
+          </div>
+          <div>
+            <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Stack Direction</label>
+            <div style="padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; background: var(--card); display: flex; justify-content: space-between; cursor: pointer;">
+              <span>Left</span>
+              <span style="color: var(--text-faint); font-size: 10px;">▾</span>
+            </div>
+          </div>
+          <!-- Row 4: Lining & Motor -->
+          <div>
+            <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Lining Type</label>
+            <div style="padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; background: var(--card); display: flex; justify-content: space-between; cursor: pointer;">
+              <span>Blockout</span>
+              <span style="color: var(--text-faint); font-size: 10px;">▾</span>
+            </div>
+          </div>
+          <div>
+            <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Motorization</label>
+            <div style="padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; background: var(--card); display: flex; justify-content: space-between; cursor: pointer;">
+              <span>Manual</span>
+              <span style="color: var(--text-faint); font-size: 10px;">▾</span>
+            </div>
+          </div>
+          <!-- Row 5: Qty & Price -->
+          <div>
+            <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Quantity</label>
+            <input class="search-input" style="width: 100%; max-width: none; padding-left: 10px; background-image: none; font-size: 13px;" type="text" value="2">
+          </div>
+          <div>
+            <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Unit Price (editable)</label>
+            <input class="search-input" style="width: 100%; max-width: none; padding-left: 10px; background-image: none; font-size: 13px;" type="text" value="$160">
+          </div>
+        </div>
+        <!-- Notes -->
+        <div style="margin-top: 14px;">
+          <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Notes</label>
+          <textarea style="width: 100%; height: 60px; border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; font-family: inherit; font-size: 12px; resize: vertical; color: var(--text);">Customer wants curtain to touch floor exactly. Measure on-site before cutting — floor may be uneven near bay window. Use S-fold style, 120mm spacing.</textarea>
+        </div>
+        <!-- Actions -->
+        <div style="margin-top: 14px; display: flex; justify-content: flex-end; gap: 8px;">
+          <button class="btn" style="font-size: 12px;">Cancel</button>
+          <button class="btn-primary btn" style="font-size: 12px;">Save Item — $320</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fallback note -->
+  <div style="margin-top: 24px;">
+    <div class="annotation">
+      <strong>Graceful fallback:</strong> If no product catalog exists, the line item input remains a plain text field with a basic notes field — exactly as it works today. The spec form only appears when a catalog product is selected. Users can still add custom items not in the catalog.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 5: CRM ↔ OMS CONNECTION FLOW        -->
+<!-- ============================================ -->
+<div id="connection" class="wireframe-section">
+
+  <div class="screen-label">Screen 5 — CRM ↔ Product Management ↔ OMS Flow</div>
+
+  <div class="flow-section" style="margin-top: 0; padding-top: 0; border-top: none;">
+    <div class="flow-title">How CRM, Product Management, and OMS Work Together</div>
+    <div class="flow-subtitle">Three modules, three layers of data. Product Management is the master catalog (templates). CRM adds per-customer specs. OMS tracks fulfillment.</div>
+
+    <div class="flow-diagram">
+      <!-- CRM Module -->
+      <div class="flow-module crm">
+        <div class="flow-module-label">CRM · Clients Module</div>
+        <div class="flow-stage">1. Discovery</div>
+        <div class="flow-stage">2. Consultation</div>
+        <div class="flow-stage">3. Quotation Sent</div>
+        <div class="flow-stage">4. Confirmed</div>
+        <div class="flow-stage handoff">5. Ordered ← handoff point</div>
+        <div class="flow-stage" style="opacity: 0.4;">6. Fulfilled (synced from OMS)</div>
+        <div class="flow-stage" style="opacity: 0.4;">7. Completed (synced from OMS)</div>
+      </div>
+
+      <!-- Products Catalog (center) -->
+      <div style="flex: 0.6; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+        <div style="border: 2px solid #93c5fd; border-radius: var(--radius-lg); padding: 14px; background: #eff6ff; text-align: center; width: 100%;">
+          <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #1e40af; margin-bottom: 4px;">Product Mgmt</div>
+          <div style="font-size: 11px; color: var(--text-muted);">Master Catalog<br>Pricing & Variants<br>Cost & Margins</div>
+        </div>
+        <div style="font-size: 20px; color: var(--text-faint);">↕</div>
+        <div style="font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-faint); text-align: center;">Feeds both<br>modules</div>
+        <div style="font-size: 20px; color: var(--text-muted);">→</div>
+        <div style="font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-faint); text-align: center;">Auto-create<br>order</div>
+      </div>
+
+      <!-- OMS Module -->
+      <div class="flow-module oms">
+        <div class="flow-module-label">OMS · Orders Module</div>
+        <div class="flow-stage handoff">1. Ordered (auto-created)</div>
+        <div class="flow-stage">2. In Production</div>
+        <div class="flow-stage">3. Ready for Delivery</div>
+        <div class="flow-stage">4. Delivered</div>
+        <div style="margin-top: 12px; padding: 8px 12px; background: rgba(255,255,255,0.7); border-radius: var(--radius); border: 1px dashed #93c5fd;">
+          <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #1e40af; margin-bottom: 4px;">Product Management</div>
+          <div style="font-size: 11px; color: var(--text-muted);">Master catalog + pricing + variants + cost/margin. Feeds CRM line items via autocomplete.</div>
+        </div>
+        <div style="margin-top: 8px; font-size: 11px; color: var(--text-faint); padding: 0 12px;">
+          Stages are customizable in Settings
+        </div>
+      </div>
+    </div>
+
+    <!-- Three-Layer Data Architecture -->
+    <div style="margin-top: 32px; margin-bottom: 24px;">
+      <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 16px;">Three-Layer Data Model</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+        <div style="border: 2px solid #93c5fd; border-radius: var(--radius-lg); padding: 16px; background: #eff6ff;">
+          <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #1e40af; margin-bottom: 8px;">Layer 1: Product Catalog</div>
+          <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">
+            <strong>Master template</strong><br>
+            Product name, description<br>
+            Category, variants<br>
+            Base price, cost price<br>
+            Margin %<br>
+            Available options (lining types, finishes)
+          </div>
+        </div>
+        <div style="border: 2px solid #fde047; border-radius: var(--radius-lg); padding: 16px; background: #fefce8;">
+          <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #854d0e; margin-bottom: 8px;">Layer 2: Deal Line Item (CRM)</div>
+          <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">
+            <strong>Customized instance</strong><br>
+            References catalog product<br>
+            Width, drop (per window)<br>
+            Room name, window position<br>
+            Fixing, stack, lining, motor<br>
+            Per-item notes & instructions<br>
+            Qty, adjusted price
+          </div>
+        </div>
+        <div style="border: 2px solid #93c5fd; border-radius: var(--radius-lg); padding: 16px; background: #eff6ff;">
+          <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #1e40af; margin-bottom: 8px;">Layer 3: Order Line Item (OMS)</div>
+          <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">
+            <strong>Inherited + fulfillment data</strong><br>
+            All specs from deal line item<br>
+            Production status per item<br>
+            Supplier/factory assignment<br>
+            Quality check notes<br>
+            Delivery scheduling
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Explanation notes -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+      <div class="flow-note">
+        <strong>Product Management (standalone):</strong> Master catalog that defines what you sell. Manages pricing, variants, cost/margin. Feeds into both CRM and OMS. Accessible from its own sidebar item.
+      </div>
+      <div class="flow-note">
+        <strong>CRM → OMS (dependent):</strong> When deal reaches "Ordered", auto-creates order with all customized line items (specs, notes, dimensions). OMS inherits everything — no re-entry needed.
+      </div>
+      <div class="flow-note">
+        <strong>OMS → CRM (sync back):</strong> When order reaches "Delivered", deal auto-advances to "Fulfilled". Delivery confirmation date flows back to the deal.
+      </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+      <div class="flow-note">
+        <strong>Why Product Management is separate from OMS:</strong> Industry best practice (PIM pattern). The product catalog is configuration data that changes infrequently. Deal/order line items are transactional data with per-instance customization. Keeping them separate means: (1) pricing changes don't retroactively affect existing orders, (2) the catalog is accessible from any module, (3) cost/margin data stays in Product Management — CRM users see sell price only.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 4: MOBILE VIEWS                      -->
+<!-- ============================================ -->
+<div id="mobile" class="wireframe-section">
+
+  <div class="screen-label">Screen 6 — Mobile Views</div>
+
+  <div class="annotation">
+    <strong>Design note:</strong> On mobile, the sidebar collapses to a hamburger menu (same as existing CRM). KPI cards stack in a 2×2 grid. Order rows become full-width cards. The detail view stacks the sidebar content below the main content.
+  </div>
+
+  <div style="display: flex; gap: 32px; justify-content: center; flex-wrap: wrap;">
+
+    <!-- Mobile: Orders List -->
+    <div>
+      <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-align: center; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Orders List</div>
+      <div class="mobile-frame">
+        <div class="mobile-topbar">
+          <div class="mobile-hamburger">
+            <span></span><span></span><span></span>
+          </div>
+          <h3>Orders</h3>
+          <div style="width: 20px;"></div>
+        </div>
+        <div class="mobile-body">
+          <!-- KPI Grid -->
+          <div class="mobile-kpi-grid">
+            <div class="mobile-kpi">
+              <div class="kpi-label"><span class="kpi-dot" style="background: var(--stage-ordered-border);"></span> Ordered</div>
+              <div class="kpi-value">3</div>
+              <div class="kpi-sub">$1,280</div>
+            </div>
+            <div class="mobile-kpi">
+              <div class="kpi-label"><span class="kpi-dot" style="background: var(--stage-production-border);"></span> Production</div>
+              <div class="kpi-value">2</div>
+              <div class="kpi-sub">$1,680</div>
+            </div>
+            <div class="mobile-kpi">
+              <div class="kpi-label"><span class="kpi-dot" style="background: var(--stage-ready-border);"></span> Ready</div>
+              <div class="kpi-value">1</div>
+              <div class="kpi-sub">$180</div>
+            </div>
+            <div class="mobile-kpi">
+              <div class="kpi-label"><span class="kpi-dot" style="background: var(--stage-delivered-border);"></span> Delivered</div>
+              <div class="kpi-value">4</div>
+              <div class="kpi-sub">This month</div>
+            </div>
+          </div>
+
+          <!-- Stage: Ordered -->
+          <div class="mobile-stage-label" style="background: var(--stage-ordered-bg); color: var(--stage-ordered-text);">
+            <span>Ordered</span>
+            <span>3 · $1,280</span>
+          </div>
+          <div class="mobile-order-card">
+            <div class="mobile-order-top">
+              <div class="mobile-order-title">Living Room Curtains</div>
+              <div class="mobile-order-amount">$480</div>
+            </div>
+            <div class="mobile-order-meta">
+              <span>ORD-001</span> · <span>SW</span> · <span>Mar 19</span>
+            </div>
+          </div>
+          <div class="mobile-order-card">
+            <div class="mobile-order-top">
+              <div class="mobile-order-title">Bedroom Blinds Set</div>
+              <div class="mobile-order-amount">$320</div>
+            </div>
+            <div class="mobile-order-meta">
+              <span>ORD-002</span> · <span>Jason</span> · <span>Mar 18</span>
+              <span class="payment-badge partial" style="margin: 0;">50% paid</span>
+            </div>
+          </div>
+
+          <!-- Stage: In Production -->
+          <div class="mobile-stage-label" style="background: var(--stage-production-bg); color: var(--stage-production-text); margin-top: 12px;">
+            <span>In Production</span>
+            <span>2 · $1,680</span>
+          </div>
+          <div class="mobile-order-card">
+            <div class="mobile-order-top">
+              <div class="mobile-order-title">Office Drapes — Full Set</div>
+              <div class="mobile-order-amount">$1,200</div>
+            </div>
+            <div class="mobile-order-meta">
+              <span>ORD-004</span> · <span>Allyson</span> · <span style="color: #d97706; font-weight: 500;">Est. 5 days</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile: Order Detail -->
+    <div>
+      <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-align: center; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Order Detail</div>
+      <div class="mobile-frame">
+        <div class="mobile-topbar">
+          <span style="font-size: 16px; cursor: pointer;">← Back</span>
+          <h3 style="font-size: 14px;">ORD-001</h3>
+          <span style="font-size: 14px;">Edit</span>
+        </div>
+        <div class="mobile-body" style="padding: 12px;">
+          <!-- Title -->
+          <div style="margin-bottom: 16px;">
+            <div style="font-size: 17px; font-weight: 700;">Living Room Curtains</div>
+            <div style="font-size: 12px; color: var(--text-faint); margin-top: 2px;">SW · Deal #D-047</div>
+          </div>
+
+          <!-- Mini Timeline -->
+          <div style="display: flex; gap: 4px; margin-bottom: 20px;">
+            <div style="flex: 1; height: 4px; border-radius: 2px; background: var(--text);"></div>
+            <div style="flex: 1; height: 4px; border-radius: 2px; background: var(--stage-production-border);"></div>
+            <div style="flex: 1; height: 4px; border-radius: 2px; background: var(--border);"></div>
+            <div style="flex: 1; height: 4px; border-radius: 2px; background: var(--border);"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-faint); margin-top: -14px; margin-bottom: 16px;">
+            <span style="color: var(--text);">Ordered ✓</span>
+            <span style="color: var(--stage-production-text); font-weight: 600;">In Production</span>
+            <span>Ready</span>
+            <span>Delivered</span>
+          </div>
+
+          <!-- Advance Button -->
+          <button class="btn-primary btn" style="width: 100%; text-align: center; margin-bottom: 16px; padding: 10px;">
+            Advance to Ready →
+          </button>
+
+          <!-- Payment -->
+          <div style="background: var(--accent); border-radius: var(--radius); padding: 12px; margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+              <span style="color: var(--text-muted);">Payment</span>
+              <span style="font-weight: 600;">$240 / $480</span>
+            </div>
+            <div class="progress-bar" style="margin-bottom: 0;">
+              <div class="progress-fill partial" style="width: 50%;"></div>
+            </div>
+          </div>
+
+          <!-- Delivery -->
+          <div style="background: var(--accent); border-radius: var(--radius); padding: 12px; margin-bottom: 12px;">
+            <div style="font-size: 11px; font-weight: 600; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px;">Delivery</div>
+            <div style="font-size: 12px; margin-bottom: 4px;">123 Orchard Road, #12-05</div>
+            <div style="font-size: 12px; color: var(--stage-production-text); font-weight: 500;">Mar 28, 2:00 PM</div>
+          </div>
+
+          <!-- Items summary -->
+          <div style="background: var(--accent); border-radius: var(--radius); padding: 12px;">
+            <div style="font-size: 11px; font-weight: 600; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px;">Items (3)</div>
+            <div style="font-size: 12px; display: flex; justify-content: space-between; padding: 3px 0;">
+              <span>Blackout Curtain × 2</span><span>$320</span>
+            </div>
+            <div style="font-size: 12px; display: flex; justify-content: space-between; padding: 3px 0;">
+              <span>Curtain Rod × 1</span><span>$85</span>
+            </div>
+            <div style="font-size: 12px; display: flex; justify-content: space-between; padding: 3px 0;">
+              <span>Installation × 1</span><span>$75</span>
+            </div>
+            <div style="font-size: 12px; display: flex; justify-content: space-between; padding: 6px 0 0; border-top: 1px solid var(--border); font-weight: 600; margin-top: 4px;">
+              <span>Total</span><span>$480</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Tab switching
+  function showSection(id) {
+    document.querySelectorAll('.wireframe-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.wireframe-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    // Find the right tab
+    const tabs = document.querySelectorAll('.wireframe-tab');
+    const map = { 'orders-list': 0, 'order-detail': 1, 'products': 2, 'product-picker': 3, 'connection': 4, 'mobile': 5 };
+    if (map[id] !== undefined) tabs[map[id]].classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  // Toggle stage group expand/collapse
+  function toggleStage(header) {
+    const body = header.nextElementSibling;
+    const chevron = header.querySelector('.stage-chevron');
+    if (body.style.display === 'none') {
+      body.style.display = 'block';
+      chevron.classList.remove('collapsed');
+    } else {
+      body.style.display = 'none';
+      chevron.classList.add('collapsed');
+    }
+  }
+
+  // Toggle KPI card active state
+  function toggleKpi(card) {
+    const wasActive = card.classList.contains('active');
+    document.querySelectorAll('.kpi-card').forEach(c => c.classList.remove('active'));
+    if (!wasActive) card.classList.add('active');
+  }
+</script>
+
+</body>
+</html>

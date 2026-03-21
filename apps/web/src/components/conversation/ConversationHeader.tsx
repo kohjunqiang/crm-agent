@@ -11,8 +11,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import { Trash2 } from 'lucide-react';
+import { MoreHorizontal, Trash2 } from 'lucide-react';
 
 interface ConversationHeaderProps {
   contact: Contact;
@@ -123,32 +129,35 @@ export function ConversationHeader({
       </Select>
 
       {/* Agent toggle */}
-      <div className="flex shrink-0 items-center gap-2">
-        <span
-          className={cn(
-            'hidden text-[11px] md:inline',
-            contact.agent_enabled
-              ? 'text-emerald-600'
-              : 'text-muted-foreground',
-          )}
-        >
-          {contact.agent_enabled ? 'Agent On' : 'Agent Off'}
-        </span>
+      <div className="flex shrink-0 items-center gap-2 rounded-full bg-muted/50 px-2.5 py-1">
+        <span className="text-[11px] text-muted-foreground">AI Agent</span>
         <Switch
           checked={contact.agent_enabled}
           onCheckedChange={onAgentToggle}
         />
       </div>
 
-      {/* Delete */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive"
-        onClick={onDelete}
-      >
-        <Trash2 className="h-3.5 w-3.5" />
-      </Button>
+      {/* Overflow menu */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 shrink-0 text-muted-foreground"
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem
+            className="text-destructive focus:text-destructive"
+            onClick={onDelete}
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }

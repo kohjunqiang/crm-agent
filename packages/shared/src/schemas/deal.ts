@@ -15,6 +15,19 @@ export const DealProductSchema = z.object({
   name: z.string(),
   qty: z.number().optional(),
   price: z.number().optional(),
+  // Product catalog reference
+  product_id: z.string().uuid().optional(),
+  variant_id: z.string().uuid().optional(),
+  // Per-instance spec sheet
+  width_cm: z.number().optional(),
+  drop_cm: z.number().optional(),
+  room_name: z.string().optional(),
+  window_position: z.string().optional(),
+  fixing_type: z.string().optional(),
+  stack_direction: z.string().optional(),
+  lining_type: z.string().optional(),
+  motorization: z.string().optional(),
+  notes: z.string().optional(),
 });
 
 export const DealSchema = z.object({

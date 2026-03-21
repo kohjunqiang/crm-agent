@@ -10,3 +10,5 @@ export * from './activity';
 export * from './quotation';
 export * from './invoice';
 export * from './receipt';
+export * from './product';
+export * from './order';

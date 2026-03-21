@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import type { Contact } from '@agent-crm/shared';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ContactCard } from './ContactCard';
-import { Search } from 'lucide-react';
+import { Search, Plus } from 'lucide-react';
 import { getDisplayName } from '@/lib/format';
 
 interface ContactListProps {
@@ -40,24 +41,28 @@ export function ContactList({ contacts, selectedId, onSelect, dealValues }: Cont
 
   return (
     <div className="flex h-full flex-col">
-      <div className="px-3 py-3">
-        <div className="relative">
+      <div className="flex items-center gap-2 px-3 py-3">
+        <div className="relative flex-1">
           <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search contacts..."
+            placeholder="Search clients..."
             className="h-8 pl-8 text-xs"
           />
         </div>
+        <Button size="sm" className="h-8 shrink-0 gap-1">
+          <Plus className="h-3.5 w-3.5" />
+          Add
+        </Button>
       </div>
       <ScrollArea className="flex-1">
         <div className="flex flex-col gap-0.5 px-2 pb-2">
           {sorted.length === 0 ? (
             <p className="px-3 py-8 text-center text-sm text-muted-foreground">
               {contacts.length === 0
-                ? 'No contacts yet. Leads will appear when they message you.'
-                : 'No contacts match.'}
+                ? 'No clients yet. Leads will appear when they message you.'
+                : 'No clients match.'}
             </p>
           ) : (
             sorted.map((contact) => (

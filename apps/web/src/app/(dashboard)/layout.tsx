@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { LogoutButton } from './logout-button';
 import { SidebarNav } from './sidebar-nav';
 import { MobileNav } from './mobile-nav';
+import { getActiveOrderCount } from '@/app/actions/orders';
 
 function UserAvatar({ email }: { email: string }) {
   const initials = email
@@ -35,6 +36,13 @@ export default async function DashboardLayout({
 
   const userEmail = user.email ?? '';
   const userName = userEmail.split('@')[0] ?? 'User';
+
+  let activeOrderCount = 0;
+  try {
+    activeOrderCount = await getActiveOrderCount();
+  } catch {
+    // Ignore — tables may not exist yet before migration runs
+  }
 
   const sidebarBrand = (
     <>
@@ -69,7 +77,7 @@ export default async function DashboardLayout({
       <MobileNav>
         {sidebarBrand}
         <div className="mt-4 flex-1">
-          <SidebarNav />
+          <SidebarNav activeOrderCount={activeOrderCount} />
         </div>
         {sidebarUser}
       </MobileNav>
@@ -78,7 +86,7 @@ export default async function DashboardLayout({
       <aside className="fixed left-0 top-0 hidden h-screen w-64 flex-col border-r border-sidebar-border bg-sidebar md:flex">
         {sidebarBrand}
         <div className="mt-4 flex-1">
-          <SidebarNav />
+          <SidebarNav activeOrderCount={activeOrderCount} />
         </div>
         {sidebarUser}
       </aside>

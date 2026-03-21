@@ -11,9 +11,22 @@ import {
 } from '@/components/ui/sheet';
 import { SidebarNav } from './sidebar-nav';
 
+const PAGE_TITLES: { prefix: string; label: string }[] = [
+  { prefix: '/overview', label: 'Dashboard' },
+  { prefix: '/clients', label: 'Clients' },
+  { prefix: '/products', label: 'Products' },
+  { prefix: '/orders', label: 'Orders' },
+  { prefix: '/settings', label: 'Settings' },
+];
+
+function getPageTitle(pathname: string): string {
+  return PAGE_TITLES.find((p) => pathname.startsWith(p.prefix))?.label ?? '';
+}
+
 export function MobileNav({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const pageTitle = getPageTitle(pathname);
 
   useEffect(() => {
     setOpen(false);
@@ -37,6 +50,11 @@ export function MobileNav({ children }: { children: React.ReactNode }) {
       <span className="ml-2 text-base font-semibold text-foreground">
         Drapeworks
       </span>
+      {pageTitle && (
+        <span className="ml-auto text-sm font-medium text-muted-foreground">
+          {pageTitle}
+        </span>
+      )}
     </header>
   );
 }

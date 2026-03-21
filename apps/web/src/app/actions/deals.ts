@@ -80,6 +80,16 @@ export async function updateDeal(id: string, input: UpdateDealInput): Promise<De
     .single();
   if (error) throw new Error(error.message);
 
+  // Auto-create order when deal moves to "ordered"
+  if (input.stage === 'ordered' && current?.stage !== 'ordered') {
+    try {
+      const { createOrderFromDeal } = await import('./orders');
+      await createOrderFromDeal(id);
+    } catch (err) {
+      console.error('Failed to auto-create order:', err);
+    }
+  }
+
   const deal = data as Deal;
   const eventType = input.stage && input.stage !== current?.stage ? 'stage_changed' : 'updated';
   await logActivity(supabase, {

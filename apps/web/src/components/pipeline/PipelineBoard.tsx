@@ -114,7 +114,7 @@ export function PipelineBoard({ deals, contacts }: PipelineBoardProps) {
                   {stageDeals.map((deal) => (
                     <Link
                       key={deal.id}
-                      href={`/conversations?contact=${deal.contact_id}`}
+                      href={`/clients?contact=${deal.contact_id}`}
                       className={cn(
                         'flex items-center justify-between gap-3 rounded-md border-l-2 bg-card px-3 py-2 text-sm transition-colors hover:bg-accent/50',
                         STAGE_BORDER_COLORS[stage],

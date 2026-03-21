@@ -9,8 +9,9 @@ import { ContactList } from '@/components/contacts/ContactList';
 import { Separator } from '@/components/ui/separator';
 import { ConversationPanel } from '@/components/conversation/ConversationPanel';
 import { useRealtimeMessages } from '@/hooks/useRealtimeMessages';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Plus } from 'lucide-react';
 
 export default function ConversationsPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -144,10 +145,34 @@ export default function ConversationsPage() {
               />
             </>
           ) : (
-            <div className="flex flex-1 items-center justify-center">
+            <div className="flex flex-1 flex-col items-center justify-center gap-4">
+              <div className="flex items-center gap-6">
+                <div className="text-center">
+                  <p className="text-2xl font-semibold">{contacts.length}</p>
+                  <p className="text-xs text-muted-foreground">Total clients</p>
+                </div>
+                <div className="h-8 w-px bg-border" />
+                <div className="text-center">
+                  <p className="text-2xl font-semibold">
+                    {contacts.filter((c) => c.status === 'engaged').length}
+                  </p>
+                  <p className="text-xs text-muted-foreground">Engaged</p>
+                </div>
+                <div className="h-8 w-px bg-border" />
+                <div className="text-center">
+                  <p className="text-2xl font-semibold">
+                    ${Array.from(dealValues.values()).reduce((sum, v) => sum + v, 0).toLocaleString()}
+                  </p>
+                  <p className="text-xs text-muted-foreground">Pipeline</p>
+                </div>
+              </div>
               <p className="text-sm text-muted-foreground">
-                Select a contact to view the conversation.
+                Select a client or add a new one
               </p>
+              <Button size="sm" className="gap-1.5">
+                <Plus className="h-3.5 w-3.5" />
+                Add Client
+              </Button>
             </div>
           )}
         </div>

@@ -53,3 +53,42 @@ export async function deleteNote(id: string): Promise<void> {
     .eq('user_id', userId);
   if (error) throw new Error(error.message);
 }
+
+const ALLOWED_IMAGE_TYPES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/heic',
+]);
+
+export async function uploadNoteImage(formData: FormData): Promise<string> {
+  const { supabase, userId } = await getUserId();
+  const file = formData.get('file') as File | null;
+  if (!file) throw new Error('No file provided');
+  if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+    throw new Error('Only JPEG, PNG, WebP, and HEIC images are allowed');
+  }
+
+  const ext = file.name.split('.').pop() ?? 'jpg';
+  const filePath = `${userId}/notes/${crypto.randomUUID()}.${ext}`;
+
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const { error } = await supabase.storage
+    .from('documents')
+    .upload(filePath, buffer, {
+      contentType: file.type,
+      upsert: false,
+    });
+
+  if (error) throw new Error(`Upload failed: ${error.message}`);
+  return filePath;
+}
+
+export async function getNoteImageUrl(path: string): Promise<string> {
+  const { supabase } = await getUserId();
+  const { data, error } = await supabase.storage
+    .from('documents')
+    .createSignedUrl(path, 60 * 60); // 1 hour
+  if (error) throw new Error(error.message);
+  return data.signedUrl;
+}
